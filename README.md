@@ -31,7 +31,7 @@ Buchaufgabe: Prüfzahl einer Kreditkartennummer berrechnen lassen.
 Obwohl Python kann Elemente mit einer built-in Funktion sortieren, wollte ich eine manuelle Version davon erstellen, um mein Wissen zu vertiefen.
 
 ### Netzaddresse.py
-Text-Version zur Berrechnung von Netzaddressen.
+Text-Version zur Berechnung von Netzaddressen.
 
 ### Text-Datei speichern und auslesen.py
 Mit sys Textdatei speichern und auslesen lassen.
