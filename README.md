@@ -43,7 +43,7 @@ Mit sys Textdatei speichern und auslesen lassen.
 Benutzereingaben mit Fehlerbehandlung. Zur Nutzung als Import bei anderen Programmen oder ähnliches.
 
 ### Time converter.py
-Sehr simples Programm, dass Sekunden in voll Stunden, Minuten und Sekunden konvertiert.
+Sehr simples Programm, das Sekunden in volle Stunden, Minuten und Sekunden konvertiert.
 
 ### While Loop with Rerun Check + Number Check
 Simpler Codeblock, um Benutzereingabe auf Fehler zu prüfen und/oder einen Loop so lange laufen zu lassen, bis der Benutzer es abbricht (z.B. für Programme bei denen man mehr Berechnungen hintereinander machen will)
