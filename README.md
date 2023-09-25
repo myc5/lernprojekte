@@ -2,7 +2,7 @@
 
 ## Meine (ersten) selbstgeschriebenen Programme
 
-### Fischer Spiel
+**Fischer Spiel**
 
 Üben und arbeiten mit Klassen/OOP. Erstes funktionelles Spiel.
 
