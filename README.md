@@ -2,9 +2,9 @@
 
 ## Meine (ersten) selbstgeschriebenen Programme
 
-**Fischer Spiel**
+### Fischer Spiel
 
-Üben und arbeiten mit Klassen/OOP. Erstes funktionelles Spiel.
+Üben und arbeiten mit Klassen/OOP. Erstes funktionelles Spiel. Benötigt die game.py und fisher_classes.py im selben Ordner.
 
 
 ### Fakultaet.py
