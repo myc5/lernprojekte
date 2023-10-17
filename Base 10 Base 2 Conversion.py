@@ -1,4 +1,4 @@
- from time import sleep
+from time import sleep
 
 print("This is a simple app to convert from Base 10 (i.e. 'MB') to Base 2 ('MiB'), or vice versa.")
 print("")
