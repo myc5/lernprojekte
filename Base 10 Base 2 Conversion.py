@@ -1,3 +1,5 @@
+ from time import sleep
+
 print("This is a simple app to convert from Base 10 (i.e. 'MB') to Base 2 ('MiB'), or vice versa.")
 print("")
 print("")
@@ -9,7 +11,6 @@ while True:
     Binary = False
     Decimal = False
     upscale = False
-    from time import sleep
     # Supported units
     B10 = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
     B2 = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
