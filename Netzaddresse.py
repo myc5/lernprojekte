@@ -1,14 +1,21 @@
-IP_adresse = input("IP-Adresse? ")
-sub = input("Subnetzmaske? ")
-verbose = input("Mit Rechenweg? [j]oa / [n]joa ").lower()
-print("-"*30)
+debug = False
 
 # Debug
-"""IP_adresse = "10.1.96.0"
-sub = "255.255.240.0"
-verbose = "j" """
+IP_adresse = "10.0.0.253"
+sub = "255.255.255.192"
+verbose = "j"
+
+if not debug:
+    IP_adresse = input("IP-Adresse? ")
+    sub = input("Subnetzmaske? ")
+    verbose = input("Mit Rechenweg? [j]oa / [n]joa ").lower()
+    print("-"*30)
+
+
 
 count = 0
+
+# Note: Add a try/except to catch index out of range issues for inputs that are too long/not conforming to IP syntax in the next version
 
 # Einlesen, Formatierung und Binärumwandlung der IP-Adressen
 splitIP = IP_adresse.split(".")
@@ -83,9 +90,13 @@ while x >= 256:
 
 # Bestimmung der BC: +Blockgröße auf das x.te Oktett, dann -1 im 4.
 bcNetz = netzID[:]
+
 bcNetz[oktett-1] += x
+if oktett == 4:
+    bcNetz[3] -= 1
+
 if bcNetz[oktett-1] > 255:
-    # bcNetz[oktett-2] += bcNetz[oktett - 1] - 255 Scheinbar gibt es keinen Übertrag? Stimmt das so?
+    bcNetz[oktett-2] += bcNetz[oktett - 1] - 255
     bcNetz[oktett - 1] = 255
 
 if bcNetz[3] == 0:
@@ -102,8 +113,9 @@ if bcNetz[3] == 0:
                 bcNetz[1] = bcNetz[1] - 1
     else:
         bcNetz[2] = bcNetz[2] - 1
-else:
-    bcNetz[3] = bcNetz[3] - 1
+
+#else:
+#    bcNetz[3] = bcNetz[3] - 1
 
 if verbose == "j":
     print(f"({oktett}. Oktett)")
