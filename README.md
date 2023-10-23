@@ -7,6 +7,9 @@
 ### Fischer Spiel
 Üben und arbeiten mit Klassen/OOP. Erstes funktionelles Spiel. Benötigt die game.py und fisher_classes.py im selben Ordner.
 
+### ITT-Helper
+Die GUI-Version zur Bestimmung vom IPv4 Netz-IDs, Subnetzen usw. Erstmal nur die barebones Version, Design und zusätzliche Features wie die Berechnung von Transfergeschwindigkeiten für Dateien bzw. Video-/Bildgrößen folgt demnächst.
+
 ## Kleinere Projekte
 
 ### Base 10 Base 2 Conversion.py
