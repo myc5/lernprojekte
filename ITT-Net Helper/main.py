@@ -43,7 +43,7 @@ class ITT:
 
         # Header -> Logo & Text
         self.logo = PhotoImage(file = "testlogo.png")
-        ttk.Label(self.frame_header, image = self.logo).grid(row = 0, column = 0, rowspan = 2, stick="w") # no variables because they will not change, change for easter egg
+        ttk.Label(self.frame_header, image = self.logo).grid(row = 0, column = 0, rowspan = 2, stick="w") 
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row = 0, column = 1) # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength= 400, text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(row = 1, column = 1)
 
@@ -146,8 +146,7 @@ class ITT:
             self.ergebnisbox.insert("end", f"\n")
             self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {2**(32-CIDR)-2}\n")
             
-            # Spacing for visualization of the broadcast calculations in Rechenwegbox
-                       
+            # Spacing for visualization of the broadcast calculations in Rechenwegbox          
             if octet == 4:
                 pad = 25*" "
             elif octet == 3:
@@ -181,7 +180,6 @@ class ITT:
                     else:
                         self.rechenwegbox.insert("end", f" = {unmodified_block}/256")
 
-
         def clear():
             self.spin_CIDR.delete(0, "end")
             self.entry_sub.delete(0, "end")
@@ -199,4 +197,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
