@@ -91,10 +91,10 @@ class ITT:
         self.entry_Netzadresse.insert(0, "192.168.110.0")
         Hovertip(self.entry_Netzadresse, 'Format: xxx.xxx.xxx.xxx')
 
-        self.ergebnisbox = self.text_ergebnis = Text(self.frame_content, width = 65, height = 10)
+        self.ergebnisbox = self.text_ergebnis = Text(self.frame_content, width = 65, height = 12)
         self.ergebnisbox.grid(row=4, column=0)
         self.ergebnisbox.insert("1.0", "Ergebnisbox")
-        self.rechenwegbox = Text(self.frame_content, width=65, height=10)
+        self.rechenwegbox = Text(self.frame_content, width=65, height=12)
         self.rechenwegbox.grid(row=4, column=1)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -132,6 +132,12 @@ class ITT:
             block_size = nac.block_size(CIDR)
             broadcast_IP, first_IP, last_IP = nac.broadcastIP(network_ID, octet, block_size)
             unmodified_block = 2 ** (32 - CIDR)
+            max_usable_hosts = 2**(32-CIDR)-2
+            if max_usable_hosts < 0:
+                max_usable_hosts = 0
+            max_subnets = (30-CIDR)**2
+            if CIDR > 30:
+                max_subnets = 0
 
             # Outputs Ergebnisbox
             self.ergebnisbox.insert("end", f"IP-Adresse: {inputNetzadresse}\n")
@@ -144,7 +150,8 @@ class ITT:
             self.ergebnisbox.insert("end", f"Erste IP:   {first_IP}\n")
             self.ergebnisbox.insert("end", f"Letzte IP:  {last_IP}\n")
             self.ergebnisbox.insert("end", f"\n")
-            self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {2**(32-CIDR)-2}\n")
+            self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {max_usable_hosts}\n")
+            self.ergebnisbox.insert("end", f"Maximale Anzahl nutzbarer Subnetze: {max_subnets}\n")
             
             # Spacing for visualization of the broadcast calculations in Rechenwegbox
                        
@@ -177,9 +184,13 @@ class ITT:
                 while unmodified_block > 256:
                     unmodified_block=unmodified_block//256
                     if unmodified_block < 256:
-                        self.rechenwegbox.insert("end", f" = {unmodified_block})")
+                        self.rechenwegbox.insert("end", f" = {unmodified_block})\n")
                     else:
                         self.rechenwegbox.insert("end", f" = {unmodified_block}/256")
+            if max_subnets == 0:
+                self.rechenwegbox.insert("end", f"CIDR darf nicht größer als 30 sein.")
+            else:
+                self.rechenwegbox.insert("end", f"30 Bit - {CIDR} Bit = {30-CIDR} Bit = {(30-CIDR)**2} ({30-CIDR}^2)")
 
 
         def clear():
@@ -199,3 +210,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
