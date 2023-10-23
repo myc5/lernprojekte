@@ -7,7 +7,7 @@ class ITT:
 
     def __init__(self, master):
         # Root
-        master.title("ITT-Helper")
+        master.title("ITT-NET Helper")
         #master.resizable(False, False)
         #master.geometry("600x400")
         
