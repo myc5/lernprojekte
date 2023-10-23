@@ -43,7 +43,7 @@ class ITT:
 
         # Header -> Logo & Text
         self.logo = PhotoImage(file = "testlogo.png")
-        ttk.Label(self.frame_header, image = self.logo).grid(row = 0, column = 0, rowspan = 2, stick="w") 
+        ttk.Label(self.frame_header, image = self.logo).grid(row = 0, column = 0, rowspan = 2, stick="w")
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row = 0, column = 1) # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength= 400, text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(row = 1, column = 1)
 
@@ -91,10 +91,10 @@ class ITT:
         self.entry_Netzadresse.insert(0, "192.168.110.0")
         Hovertip(self.entry_Netzadresse, 'Format: xxx.xxx.xxx.xxx')
 
-        self.ergebnisbox = self.text_ergebnis = Text(self.frame_content, width = 55, height = 10)
+        self.ergebnisbox = self.text_ergebnis = Text(self.frame_content, width = 65, height = 10)
         self.ergebnisbox.grid(row=4, column=0)
         self.ergebnisbox.insert("1.0", "Ergebnisbox")
-        self.rechenwegbox = Text(self.frame_content, width=70, height=10)
+        self.rechenwegbox = Text(self.frame_content, width=65, height=10)
         self.rechenwegbox.grid(row=4, column=1)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -146,7 +146,8 @@ class ITT:
             self.ergebnisbox.insert("end", f"\n")
             self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {2**(32-CIDR)-2}\n")
             
-            # Spacing for visualization of the broadcast calculations in Rechenwegbox          
+            # Spacing for visualization of the broadcast calculations in Rechenwegbox
+                       
             if octet == 4:
                 pad = 25*" "
             elif octet == 3:
@@ -179,6 +180,7 @@ class ITT:
                         self.rechenwegbox.insert("end", f" = {unmodified_block})")
                     else:
                         self.rechenwegbox.insert("end", f" = {unmodified_block}/256")
+
 
         def clear():
             self.spin_CIDR.delete(0, "end")
