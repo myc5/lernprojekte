@@ -66,12 +66,14 @@ def network_class(addition):
         type = "Class E Network"
     elif first_octet == "1110":
         type = "Class D Network"
-    elif first_octet == "1100":
+    elif first_octet == "1100" or first_octet == "1101":
         type = "Class C Network"
-    elif first_octet == "1000":
+    elif first_octet == "1000" or first_octet == "1010" or first_octet == "1011":
         type = "Class B Network"
-    elif first_octet == "0000":
+    elif first_octet[0] == "0":
         type = "Class A Network"
+    else:
+        type = "Unknown Class"
     return type
 
 def netzIDlist(addition):
@@ -114,9 +116,9 @@ def broadcastIP(netzID, oktett, block_size):
 # Debug
 debug = False
 if debug:
-    IP_adresse = "10.0.0.253"
-    #sub = "255.255.255.192"
-    cidr_input = 22
+    IP_adresse = "172.16.77.7"
+    #sub = "255.255.248.0"
+    cidr_input = 21
     sub = CIDR_to_sub(cidr_input)
 
     """
@@ -143,7 +145,5 @@ if debug:
     block_size = block_size(cidr)
     broadcastIP(netzID, oktett(cidr), block_size)
     print(f"Anzahl Hosts: {2**(32-cidr)-2}")
-
-
-
-
+    print(addition)
+    print(network_class(addition))
