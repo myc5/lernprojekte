@@ -147,3 +147,7 @@ if debug:
     print(f"Anzahl Hosts: {2**(32-cidr)-2}")
     print(addition)
     print(network_class(addition))
+
+
+
+
