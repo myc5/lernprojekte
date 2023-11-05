@@ -134,9 +134,8 @@ class NAC(): # Netzadresse
                 CIDR = nac.sub_to_CIDR(nac.Sub_split(inputSub))
             # From CIDR
             elif self.v.get() == 2:
-                inputCIDR = int(self.spin_CIDR.get())
-                inputSub = nac.CIDR_to_sub(inputCIDR)
                 CIDR = int(self.spin_CIDR.get())
+                inputSub = nac.CIDR_to_sub(CIDR)
 
             # Remaining calculations
             binary_IP = nac.IP_split(inputNetzadresse)
