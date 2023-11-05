@@ -7,7 +7,7 @@ instructions = True
 
 player_name = input("Willkommen zu World of Fish of Fishcraft. Welchen Namen soll dein Charakter haben? ")
 print()
-print(f'"{player_name}"? Na ja, nicht jeder hat guten Geschmack.')
+print(f'"{player_name}"? Na dann.')
 print()
 player_choice = input("Welche Klasse möchtest du erstellen? Du kannst auswählen zwischen [F]ischer, [F]ischer und [F]ischer: ").lower()
 print()
@@ -15,7 +15,7 @@ print()
 if player_choice == "f":
     print(f"Gute Wahl, deine Klasse ist der mächtige Fischer! Dieser verfügt über diese Attribute:\n{bcolors.OKCYAN}[G]eschick{bcolors.ENDC}\n{bcolors.OKGREEN}[A]usdauer{bcolors.ENDC}\n{bcolors.WARNING}[K]ontrolle{bcolors.ENDC}")
 else:
-    print(f'Hast du die "F"-Taste verfehlt? Es gibt hier nur Fischer, Kinder von Fischern und Fische. Und als Fisch spielen ist leider in allen Bundesländern außer Bayern verboten.\n \nDeshalb wirst du zum Fischer. Dieser verfügt über diese Attribute:\n{bcolors.OKCYAN}[G]eschick{bcolors.ENDC}\n{bcolors.OKGREEN}[A]usdauer{bcolors.ENDC}\n{bcolors.WARNING}[K]ontrolle{bcolors.ENDC}')
+    print(f'Hast du die "F"-Taste verfehlt? Es gibt hier nur Fischer, Kinder von Fischern und Fische. Und als Fisch spielen ist leider in allen Bundesländern außer Sachsen verboten.\n \nDeshalb wirst du zum Fischer. Dieser verfügt über diese Attribute:\n{bcolors.OKCYAN}[G]eschick{bcolors.ENDC}\n{bcolors.OKGREEN}[A]usdauer{bcolors.ENDC}\n{bcolors.WARNING}[K]ontrolle{bcolors.ENDC}')
 
 while instructions:
     print()
