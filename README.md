@@ -1,13 +1,11 @@
 # lernprojekte
 
-## Meine (ersten) selbstgeschriebenen Programme
-
 ## Größere Projekte
 
-### ITT-Net Helper
+## ITT-Net Helper
 Die GUI-Version zur Bestimmung vom IPv4 Netz-IDs, Subnetzen usw.
 
-## TO-DO:
+### TO-DO:
 - Implementierung der weiteren Module wie Bildgrößenberechner, Transferzeiten und eventuell ein Quiz, das der User selbst anpassen kann.
 - Fehlerbehandlung: Momentan gibt es noch keine Fehlermeldung bzw Korrektur, wenn eine Netzaddresse im falschen Format eingegeben wurde.
 - Tooltips
