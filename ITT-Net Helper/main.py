@@ -16,7 +16,7 @@ class ITT: #ITT-Helper Main Window
         master.title("ITT-NET Helper")
         #master.resizable(False, False)
         #master.geometry("600x400")
-        
+
         # Style stuff, leave for later
         """self.bg = "#7393B3"
         self.font = ("Verdana", 12)
@@ -42,13 +42,14 @@ class ITT: #ITT-Helper Main Window
         self.notebook.add(frame1, text="Netzadresse")
         netAddressCalculator = NAC(frame1, self.logo)
 
-        self.notebook.add(frame2, text="Bild-/Videodateigröße")
+        self.notebook.add(frame2, text="Bildgröße")
         imageSizeCalculator = ISC(frame2, self.logo2)
 
         self.notebook.add(frame3, text="Datei-Transfer")
         transferSpeedCalculator = TSC(frame3, self.logo3)
 
-class NAC(): # Netzadresse
+
+class NAC():  # Netzadresse
 
     def __init__(self, frame, logo):
 
@@ -63,7 +64,8 @@ class NAC(): # Netzadresse
         self.logo = PhotoImage(file="testlogo.png", master=frame)
         ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2, stick="w")
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
-        ttk.Label(self.frame_header, wraplength=400, text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(
+        ttk.Label(self.frame_header, wraplength=400,
+                  text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(
             row=1, column=1)
 
         # Frame1-Body
@@ -150,10 +152,9 @@ class NAC(): # Netzadresse
             max_usable_hosts = 2 ** (32 - CIDR) - 2
             if max_usable_hosts < 0:
                 max_usable_hosts = 0
-            max_subnets = 2** (30 - CIDR)
+            max_subnets = 2 ** (30 - CIDR)
             if CIDR > 30:
                 max_subnets = 0
-
 
             # Outputs Ergebnisbox
             self.ergebnisbox.insert("end", f"IP-Adresse: {inputNetzadresse}\n")
@@ -169,20 +170,20 @@ class NAC(): # Netzadresse
             self.ergebnisbox.insert("end", f"\n")
             self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {max_usable_hosts}\n")
             self.ergebnisbox.insert("end", f"Maximale Anzahl nutzbarer Subnetze: {max_subnets}\n")
-            if max_subnets >=4:
-                self.ergebnisbox.config(height=14) # auto-adjust height of box if more space is needed
+            if max_subnets >= 4:
+                self.ergebnisbox.config(height=14)  # auto-adjust height of box if more space is needed
                 self.rechenwegbox.config(height=14)
                 self.ergebnisbox.insert("end", f"In wie viele Subnets teilen?    ")
-                self.subnetting = ttk.Button(self.ergebnisbox, text="Subnet!", command=lambda: subnetting(network_ID, CIDR))
+                self.subnetting = ttk.Button(self.ergebnisbox, text="Subnet!",
+                                             command=lambda: subnetting(network_ID, CIDR))
                 self.combo_subnetting = ttk.Combobox(self.ergebnisbox, width=4)
-                max_subnets_values = [2**x for x in range((30-CIDR)+1)]
+                max_subnets_values = [2 ** x for x in range((30 - CIDR) + 1)]
 
                 # Set some sane limits here
-                if len(max_subnets_values) >= 2: # remove 0 and 1 if there is at least 2 possible subnets
+                if len(max_subnets_values) >= 2:  # remove 0 and 1 if there is at least 2 possible subnets
                     max_subnets_values = max_subnets_values[1:]
-                if len(max_subnets_values) >= 10: # remove the ridiculously high subnetting values, they are impractical anyway
-                    max_subnets_values = max_subnets_values[:6] # 10 --> 65536
-
+                if len(max_subnets_values) >= 10:  # remove the ridiculously high subnetting values, they are impractical anyway
+                    max_subnets_values = max_subnets_values[:6]  # 10 --> 65536
 
                 self.combo_subnetting.config(values=max_subnets_values)
                 self.combo_subnetting.set(max_subnets_values[0])
@@ -191,9 +192,8 @@ class NAC(): # Netzadresse
                 self.ergebnisbox.window_create("insert", window=self.subnetting)
                 self.ergebnisbox.insert("end", f"\n(Subnetting ist aus praktischen Gründen auf max 64 begrenzt.)    ")
             else:
-                self.ergebnisbox.config(height=12) # reset the size if no subnetting is needed
+                self.ergebnisbox.config(height=12)  # reset the size if no subnetting is needed
                 self.rechenwegbox.config(height=12)
-
 
             # Spacing for visualization of the broadcast calculations in Rechenwegbox
             # (.center probably would have worked as well with conversion to str first?)
@@ -214,10 +214,12 @@ class NAC(): # Netzadresse
             self.rechenwegbox.insert("end", f"Subnetz-Binär: + {binary_sub}\n")
             self.rechenwegbox.insert("end", f"Netz-ID(bin):  = {addition}\n")
             self.rechenwegbox.insert("end", f"\n")
-            self.rechenwegbox.insert("end", f"Netz-ID(dez):            {network_ID[0]}  .  {network_ID[1]}  .  {network_ID[2]}  .  {network_ID[3]}\n")
+            self.rechenwegbox.insert("end",
+                                     f"Netz-ID(dez):            {network_ID[0]}  .  {network_ID[1]}  .  {network_ID[2]}  .  {network_ID[3]}\n")
             self.rechenwegbox.insert("end", f"Blockgröße auf {octet}.Oktett{pad}+{block_size}\n")
             self.rechenwegbox.insert("end", f"1 vom 4.Oktett abziehen{pad2}-1 \n")
-            self.rechenwegbox.insert("end", f"Broadcast:             = {bc_spaced[0]}  .  {bc_spaced[1]}  .  {bc_spaced[2]}  .  {bc_spaced[3]}\n")
+            self.rechenwegbox.insert("end",
+                                     f"Broadcast:             = {bc_spaced[0]}  .  {bc_spaced[1]}  .  {bc_spaced[2]}  .  {bc_spaced[3]}\n")
             self.rechenwegbox.insert("end", f"\n")
             self.rechenwegbox.insert("end", f"Blockgröße: {block_size}")
             if unmodified_block <= 256:
@@ -233,7 +235,8 @@ class NAC(): # Netzadresse
             if max_subnets == 0:
                 self.rechenwegbox.insert("end", f"CIDR darf nicht größer als 30 sein.")
             else:
-                self.rechenwegbox.insert("end", f"30 Bit - {CIDR} Bit = {30 - CIDR} Bit = {2**(30 - CIDR)} (2^{30 - CIDR})")
+                self.rechenwegbox.insert("end",
+                                         f"30 Bit - {CIDR} Bit = {30 - CIDR} Bit = {2 ** (30 - CIDR)} (2^{30 - CIDR})")
 
         ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
@@ -251,59 +254,64 @@ class NAC(): # Netzadresse
 
             list_of_bc_IPs = sbn.subnet_bc_IPs(list_of_net_IDs)
 
-            #list_of_bc_IPs = list_of_bc_IPs[1:]
+            # list_of_bc_IPs = list_of_bc_IPs[1:]
             list_of_last_IPs = sbn.subnet_last_IPs(list_of_bc_IPs)
 
-            #list_of_net_IDs = list_of_net_IDs[:-1]
-            #list_of_first_IPs = list_of_first_IPs[:-1]
-            
+            # list_of_net_IDs = list_of_net_IDs[:-1]
+            # list_of_first_IPs = list_of_first_IPs[:-1]
+
             # FORMATTING & STYLE
-            fg1 = "#195c03" # dark green
-            fg2 = "#030f73" # dark blue
+            fg1 = "#195c03"  # dark green
+            fg2 = "#030f73"  # dark blue
             boldfont = "Verdana 14 bold"
-            
+
             # Creating the window
             subnet = Tk()
-            subnet.title(f"Subnetting {list_of_net_IDs[0][0]}.{list_of_net_IDs[0][1]}.{list_of_net_IDs[0][2]}.{list_of_net_IDs[0][3]}/{CIDR} in {num_of_subnets} Netze")
+            subnet.title(
+                f"Subnetting {list_of_net_IDs[0][0]}.{list_of_net_IDs[0][1]}.{list_of_net_IDs[0][2]}.{list_of_net_IDs[0][3]}/{CIDR} in {num_of_subnets} Netze")
 
             ttk.Label(subnet, text="#", font=boldfont).grid(row=0, column=0, padx=10)
-            ttk.Label(subnet, text="Netz-ID", font = boldfont).grid(row=0, column=1, padx=30)
-            ttk.Label(subnet, text="Erste IP", font = boldfont).grid(row=0, column=2, padx=30)
-            ttk.Label(subnet, text="Letzte IP", font = boldfont).grid(row=0, column=3, padx=30)
-            ttk.Label(subnet, text="Broadcast IP", font = boldfont).grid(row=0, column=4, padx=30)
+            ttk.Label(subnet, text="Netz-ID", font=boldfont).grid(row=0, column=1, padx=30)
+            ttk.Label(subnet, text="Erste IP", font=boldfont).grid(row=0, column=2, padx=30)
+            ttk.Label(subnet, text="Letzte IP", font=boldfont).grid(row=0, column=3, padx=30)
+            ttk.Label(subnet, text="Broadcast IP", font=boldfont).grid(row=0, column=4, padx=30)
 
-            if num_of_subnets >32:
+            if num_of_subnets > 32:
                 ttk.Label(subnet, text="|", font=boldfont).grid(row=0, column=5, padx=30)
                 ttk.Label(subnet, text="#", font=boldfont).grid(row=0, column=6, padx=10)
-                ttk.Label(subnet, text="Netz-ID", font = boldfont).grid(row=0, column=7, padx=30)
-                ttk.Label(subnet, text="Erste IP", font = boldfont).grid(row=0, column=8, padx=30)
-                ttk.Label(subnet, text="Letzte IP", font = boldfont).grid(row=0, column=9, padx=30)
-                ttk.Label(subnet, text="Broadcast IP", font = boldfont).grid(row=0, column=10, padx=30)
+                ttk.Label(subnet, text="Netz-ID", font=boldfont).grid(row=0, column=7, padx=30)
+                ttk.Label(subnet, text="Erste IP", font=boldfont).grid(row=0, column=8, padx=30)
+                ttk.Label(subnet, text="Letzte IP", font=boldfont).grid(row=0, column=9, padx=30)
+                ttk.Label(subnet, text="Broadcast IP", font=boldfont).grid(row=0, column=10, padx=30)
 
             for i in range(len(list_of_net_IDs)):
-                if i >=32:
+                if i >= 32:
                     if i % 2:
                         fg = fg1
                     else:
                         fg = fg2
-                    ttk.Label(subnet, text="|").grid(row=i-31, column=5, padx=30)
-                    ttk.Label(subnet, text=f"{i + 1}. Netz", foreground=fg).grid(row=i -31, column=6, padx=5)
+                    ttk.Label(subnet, text="|").grid(row=i - 31, column=5, padx=30)
+                    ttk.Label(subnet, text=f"{i + 1}. Netz", foreground=fg).grid(row=i - 31, column=6, padx=5)
                     ttk.Label(subnet,
-                              text=f"{list_of_net_IDs[i][0]}.{list_of_net_IDs[i][1]}.{list_of_net_IDs[i][2]}.{list_of_net_IDs[i][3]}  /{CIDR + sbn.CIDR_dict[num_of_subnets]}", foreground=fg).grid(
-                        row=i -31, column=7,
+                              text=f"{list_of_net_IDs[i][0]}.{list_of_net_IDs[i][1]}.{list_of_net_IDs[i][2]}.{list_of_net_IDs[i][3]}  /{CIDR + sbn.CIDR_dict[num_of_subnets]}",
+                              foreground=fg).grid(
+                        row=i - 31, column=7,
                         padx=27)
                     ttk.Label(subnet,
-                              text=f"{list_of_first_IPs[i][0]}.{list_of_first_IPs[i][1]}.{list_of_first_IPs[i][2]}.{list_of_first_IPs[i][3]}", foreground=fg).grid(
-                        row=i -31,
+                              text=f"{list_of_first_IPs[i][0]}.{list_of_first_IPs[i][1]}.{list_of_first_IPs[i][2]}.{list_of_first_IPs[i][3]}",
+                              foreground=fg).grid(
+                        row=i - 31,
                         column=8,
                         padx=30)
                     ttk.Label(subnet,
-                              text=f"{list_of_last_IPs[i][0]}.{list_of_last_IPs[i][1]}.{list_of_last_IPs[i][2]}.{list_of_last_IPs[i][3]}", foreground=fg).grid(
-                        row=i -31, column=9,
+                              text=f"{list_of_last_IPs[i][0]}.{list_of_last_IPs[i][1]}.{list_of_last_IPs[i][2]}.{list_of_last_IPs[i][3]}",
+                              foreground=fg).grid(
+                        row=i - 31, column=9,
                         padx=30)
                     ttk.Label(subnet,
-                              text=f"{list_of_bc_IPs[i][0]}.{list_of_bc_IPs[i][1]}.{list_of_bc_IPs[i][2]}.{list_of_bc_IPs[i][3]}", foreground=fg).grid(
-                        row=i -31, column=10,
+                              text=f"{list_of_bc_IPs[i][0]}.{list_of_bc_IPs[i][1]}.{list_of_bc_IPs[i][2]}.{list_of_bc_IPs[i][3]}",
+                              foreground=fg).grid(
+                        row=i - 31, column=10,
                         padx=30)
                 else:
                     if i % 2:
@@ -311,23 +319,24 @@ class NAC(): # Netzadresse
                     else:
                         fg = fg2
                     ttk.Label(subnet, text=f"{i + 1}. Netz", foreground=fg).grid(row=i + 1, column=0, padx=5)
-                    ttk.Label(subnet, text=f"{list_of_net_IDs[i][0]}.{list_of_net_IDs[i][1]}.{list_of_net_IDs[i][2]}.{list_of_net_IDs[i][3]}  /{CIDR + sbn.CIDR_dict[num_of_subnets]}", foreground=fg).grid(row=i + 1, column=1,
-                                                                                                    padx=27)
-                    ttk.Label(subnet, text=f"{list_of_first_IPs[i][0]}.{list_of_first_IPs[i][1]}.{list_of_first_IPs[i][2]}.{list_of_first_IPs[i][3]}", foreground=fg).grid(row=i + 1,
-                                                                                                            column=2,
-                                                                                                            padx=30)
-                    ttk.Label(subnet, text=f"{list_of_last_IPs[i][0]}.{list_of_last_IPs[i][1]}.{list_of_last_IPs[i][2]}.{list_of_last_IPs[i][3]}", foreground=fg).grid(row=i + 1, column=3,
-                                                                                                        padx=30)
-                    ttk.Label(subnet, text=f"{list_of_bc_IPs[i][0]}.{list_of_bc_IPs[i][1]}.{list_of_bc_IPs[i][2]}.{list_of_bc_IPs[i][3]}", foreground=fg).grid(row=i + 1, column=4,
-                                                                                                padx=30)
+                    ttk.Label(subnet,
+                              text=f"{list_of_net_IDs[i][0]}.{list_of_net_IDs[i][1]}.{list_of_net_IDs[i][2]}.{list_of_net_IDs[i][3]}  /{CIDR + sbn.CIDR_dict[num_of_subnets]}",
+                              foreground=fg).grid(row=i + 1, column=1,
+                                                  padx=27)
+                    ttk.Label(subnet,
+                              text=f"{list_of_first_IPs[i][0]}.{list_of_first_IPs[i][1]}.{list_of_first_IPs[i][2]}.{list_of_first_IPs[i][3]}",
+                              foreground=fg).grid(row=i + 1,
+                                                  column=2,
+                                                  padx=30)
+                    ttk.Label(subnet,
+                              text=f"{list_of_last_IPs[i][0]}.{list_of_last_IPs[i][1]}.{list_of_last_IPs[i][2]}.{list_of_last_IPs[i][3]}",
+                              foreground=fg).grid(row=i + 1, column=3,
+                                                  padx=30)
+                    ttk.Label(subnet,
+                              text=f"{list_of_bc_IPs[i][0]}.{list_of_bc_IPs[i][1]}.{list_of_bc_IPs[i][2]}.{list_of_bc_IPs[i][3]}",
+                              foreground=fg).grid(row=i + 1, column=4,
+                                                  padx=30)
 
-
-
-
-
-
-
-            # Debug
             """print("Net-IDs", list_of_net_IDs)
             print("First IPs", list_of_first_IPs)
             print("Last IPs", list_of_last_IPs)
@@ -337,28 +346,140 @@ class NAC(): # Netzadresse
                 print(list_of_first_IPs[i], "|", list_of_last_IPs[i], "|", list_of_net_IDs[i], "|", list_of_bc_IPs[i])"""
 
 
-
-class ISC: #Bildgröße
+class ISC:  # Bildgröße
 
     def __init__(self, frame, logo):
-
         self.logo = logo
+        self.frame = frame
 
         # Frame2 -> Header
         self.frame_header = ttk.Frame(frame)
         self.frame_header.pack()
 
         # Frame2 -> Logo & Text
-        #self.logo = PhotoImage(file="testlogo2.png", master=frame)
+        # self.logo = PhotoImage(file="testlogo2.png", master=frame)
         ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, rowspan=2, stick="w")
         ttk.Label(self.frame_header, text="Bild- und Videodateigrößenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
-        ttk.Label(self.frame_header, wraplength=400, text="\n Berechnung der Größe von Bild und Videodateien.\n\n"
-                  "Coming Soon\n").grid(row=1, column=1)
-
+        ttk.Label(self.frame_header, wraplength=400, text="\n Berechnung der Größe von Bild und Videodateien.\n\n""Bitte nur Zahlen ohne Einheiten eintippen\n").grid(row=1, column=1)
         # Frame2-Body
         self.frame_content = ttk.Frame(frame)
         self.frame_content.pack()
 
+        # Frame2-Body -> Image Dimensions & Video Data
+        self.frame_content_dimensions = ttk.Frame(self.frame_content)
+        self.frame_content_dimensions.grid(row=0, column=0)
+
+        self.frame_video_check = ttk.Frame(self.frame_content)
+        self.frame_video_check.grid(row=1, column=1, sticky="n")
+
+        self.frame_content_video = ttk.Frame(self.frame_content)
+        self.frame_content_video.grid(row=0, column=1, sticky="n")
+
+
+        # Radiobuttons
+        # Pixel will be enabled by default, Video-Checkbox and DPI will be disabled from the get-go
+        def disableDPI_enablePX():
+            self.dpiWidthEntry.configure(state=["disabled"])
+            self.dpiHeightEntry.configure(state=["disabled"])
+            self.pxWidthEntry.configure(state=["!disabled"])
+            self.pxHeightEntry.configure(state=["!disabled"])
+
+        def disablePX_enableDPI():
+            self.dpiWidthEntry.configure(state=["!disabled"])
+            self.dpiHeightEntry.configure(state=["!disabled"])
+            self.pxWidthEntry.configure(state=["disabled"])
+            self.pxHeightEntry.configure(state=["disabled"])
+
+        def enableVideoFrame():
+            for widget in self.frame_content_video.winfo_children():
+                widget.configure(state=["!disabled"])
+
+        def disableVideoFrame():
+            for widget in self.frame_content_video.winfo_children():
+                widget.configure(state=["disabled"])
+
+
+        self.boolvar = BooleanVar()
+        self.boolvar.set(False)
+        self.checkbtnVideo = ttk.Checkbutton(self.frame_video_check, variable=self.boolvar, text="Video?", command=lambda: enableVideoFrame() if self.boolvar.get()==True else disableVideoFrame())
+        self.checkbtnVideo.grid(row=0, column=0, padx=0, pady=0)
+        self.v = IntVar()
+        self.pxRadio = ttk.Radiobutton(self.frame_content_dimensions,text="Pixel [Px]", variable=self.v, value=1, command=lambda: disableDPI_enablePX())
+        self.pxRadio.grid(row=0, column=0)
+        self.pxHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
+        self.pxHeightEntry.grid(row=0, column=1, padx=0, pady=0)
+        self.pxHeightEntry.insert(0, "3200")
+        ttk.Label(self.frame_content_dimensions, text="x").grid(row=0, column=2, padx=0, pady=0)
+        self.pxWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
+        self.pxWidthEntry.grid(row=0, column=3)
+        self.pxWidthEntry.insert(0, "1800")
+
+        self.dpiRadio = ttk.Radiobutton(self.frame_content_dimensions, text="DPI [cm]", variable=self.v, value=2, command=lambda: disablePX_enableDPI())
+        self.dpiRadio.grid(row=1, column=0)
+        self.dpiHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
+        self.dpiHeightEntry.grid(row=1, column=1)
+        self.dpiHeightEntry.insert(0, "24")
+        ttk.Label(self.frame_content_dimensions, text="x").grid(row=1, column=2)
+        self.dpiWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
+        self.dpiWidthEntry.grid(row=1, column=3)
+        self.dpiWidthEntry.insert(0, "16")
+
+        self.videoFPS = ttk.Entry(self.frame_content_video, width=4)
+        self.videoFPS.insert(0, "24")
+
+        self.videoLengthHours = ttk.Entry(self.frame_content_video, width=4)
+        self.videoLengthHours.insert(0, "2")
+
+        self.videoLengthMinutes = ttk.Entry(self.frame_content_video, width=4)
+        self.videoLengthMinutes.insert(0, "56")
+
+        self.videoLengthSeconds = ttk.Entry(self.frame_content_video, width=4)
+        self.videoLengthSeconds.insert(0, "37")
+
+        self.videoFPSLabel = ttk.Label(self.frame_content_video, text="Bilder/Sek", justify="center")
+        self.videoLengthHoursLabel = ttk.Label(self.frame_content_video, text="Std", justify="center")
+        self.videoLengthMinutesLabel = ttk.Label(self.frame_content_video, text="Min", justify="center")
+        self.videoLengthSecondsLabel = ttk.Label(self.frame_content_video, text="Sek", justify="center")
+
+
+        self.videoFPSLabel.grid(row=0, column=0, padx=5, pady=0)
+        self.videoFPS.grid(row=1, column=0, padx=5, pady=0)
+
+        self.videoLengthHoursLabel.grid(row=0, column=1, padx=5, pady=0)
+        self.videoLengthHours.grid(row=1, column=1, padx=5, pady=0)
+
+        self.videoLengthMinutesLabel.grid(row=0, column=2, padx=5, pady=0)
+        self.videoLengthMinutes.grid(row=1, column=2, padx=5, pady=0)
+
+        self.videoLengthSecondsLabel.grid(row=0, column=3, padx=5, pady=0)
+        self.videoLengthSeconds.grid(row=1, column=3, padx=5, pady=0)
+
+        unitList = ["Bit", "Byte", "KB", "MB", "GB", "TB", "KiB", "MiB", "GiB", "TiB"]
+
+        self.unitsLabel = ttk.Label(self.frame_content_dimensions, text="Umrechnung in?", justify="center")
+        self.unitsLabel.grid(row=4, column=0)
+        self.units = ttk.Combobox(self.frame_content_dimensions, values=unitList, width=6, justify="center")
+        self.units.insert(0, "MiB")
+        self.units.configure(state="readonly")
+        self.units.grid(row=4, column=1)
+
+        # Set radiobutton default to PX, disable DPI entry, disable Video
+        self.v.set(1)
+        self.dpiWidthEntry.configure(state=["disabled"])
+        self.dpiHeightEntry.configure(state=["disabled"])
+
+        self.rechenwegbox = Text(self.frame_content, width=65, height=12)
+        self.rechenwegbox.grid(row=4, column=0, columnspan=2)
+        self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
+
+        # Start with Video Frame disabled
+        disableVideoFrame()
+
+        def calc():
+            self.rechenwegbox.delete("1.0", "end")
+            self.rechenwegbox.insert("end", "Noch nicht implementiert.")
+
+        ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
 class TSC: #Datei-Transfer
 
@@ -373,23 +494,14 @@ class TSC: #Datei-Transfer
         # Frame3 -> Logo & Text
         #self.logo = PhotoImage(file="testlogo.png")
         ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, rowspan=2, stick="w")
-        ttk.Label(self.frame_header, text="Datei-Transferzeit").grid(row=0, column=1)  # style = "Header.TLabel"
+        ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength=400,
-                  text="\n Berechnung der Zeit, die benötigt wird, um eine Date hoch- bzw. runterzuladen.\n\n"
-                            "Coming Soon\n").grid(
+                  text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(
             row=1, column=1)
 
         # Frame3-Body
         self.frame_content = ttk.Frame(frame)
         self.frame_content.pack()
-
-
-""" Idea: Have a multiple choice quiz here. Ideally, have the user be able to create, import and save custom questions.
-class Quiz: # Quiz
-
-    def __init__(self, frame, logo):
-
-        self.logo = logo"""
 
 
 """
