@@ -335,10 +335,6 @@ class NAC(): # Netzadresse
             print("  Start Address  |   End Address  |  Network Address  |  Broadcast Address ")
             for i in range(len(list_of_net_IDs)):
                 print(list_of_first_IPs[i], "|", list_of_last_IPs[i], "|", list_of_net_IDs[i], "|", list_of_bc_IPs[i])"""
-            mainloop()
-
-
-
 
 
 
