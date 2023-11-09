@@ -14,7 +14,7 @@ class ITT: #ITT-Helper Main Window
 
         # Root
         master.title("ITT-NET Helper")
-        #master.resizable(False, False)
+        master.resizable(False, False)
         #master.geometry("600x400")
 
         # Style stuff, leave for later
@@ -62,9 +62,9 @@ class NAC():  # Netzadresse
 
         # Frame1 -> Logo & Text
         self.logo = PhotoImage(file="testlogo.png", master=frame)
-        ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2, stick="w")
+        ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2)
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
-        ttk.Label(self.frame_header, wraplength=400,
+        ttk.Label(self.frame_header, wraplength=600,
                   text="\nBerechnung der Netz-ID, Broadcast-IP, erster und letzter nutzbarer IP und Anzahl der nutzbaren Hosts.\n").grid(
             row=1, column=1)
 
@@ -113,10 +113,10 @@ class NAC():  # Netzadresse
         self.entry_Netzadresse.insert(0, "192.168.110.0")
         Hovertip(self.entry_Netzadresse, 'Format: xxx.xxx.xxx.xxx')
 
-        self.ergebnisbox = Text(self.frame_content, width=65, height=12)
+        self.ergebnisbox = Text(self.frame_content, width=65, height=14)
         self.ergebnisbox.grid(row=4, column=0)
         self.ergebnisbox.insert("1.0", "Ergebnisbox")
-        self.rechenwegbox = Text(self.frame_content, width=65, height=12)
+        self.rechenwegbox = Text(self.frame_content, width=65, height=14)
         self.rechenwegbox.grid(row=4, column=1)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -171,8 +171,8 @@ class NAC():  # Netzadresse
             self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {max_usable_hosts}\n")
             self.ergebnisbox.insert("end", f"Maximale Anzahl nutzbarer Subnetze: {max_subnets}\n")
             if max_subnets >= 4:
-                self.ergebnisbox.config(height=14)  # auto-adjust height of box if more space is needed
-                self.rechenwegbox.config(height=14)
+                self.ergebnisbox.config(height=15)  # auto-adjust height of box if more space is needed
+                self.rechenwegbox.config(height=15)
                 self.ergebnisbox.insert("end", f"In wie viele Subnets teilen?    ")
                 self.subnetting = ttk.Button(self.ergebnisbox, text="Subnet!",
                                              command=lambda: subnetting(network_ID, CIDR))
@@ -182,7 +182,7 @@ class NAC():  # Netzadresse
                 # Set some sane limits here
                 if len(max_subnets_values) >= 2:  # remove 0 and 1 if there is at least 2 possible subnets
                     max_subnets_values = max_subnets_values[1:]
-                if len(max_subnets_values) >= 10:  # remove the ridiculously high subnetting values, they are impractical anyway
+                if len(max_subnets_values) >= 6:  # remove the ridiculously high subnetting values, they are impractical anyway
                     max_subnets_values = max_subnets_values[:6]  # 10 --> 65536
 
                 self.combo_subnetting.config(values=max_subnets_values)
@@ -190,10 +190,10 @@ class NAC():  # Netzadresse
 
                 self.ergebnisbox.window_create("insert", window=self.combo_subnetting)
                 self.ergebnisbox.window_create("insert", window=self.subnetting)
-                self.ergebnisbox.insert("end", f"\n(Subnetting ist aus praktischen Gründen auf max 64 begrenzt.)    ")
+                self.ergebnisbox.insert("end", f"\n\nBitte beachten: Subnetting ist übersichtshalber auf 64 begrenzt    ")
             else:
-                self.ergebnisbox.config(height=12)  # reset the size if no subnetting is needed
-                self.rechenwegbox.config(height=12)
+                self.ergebnisbox.config(height=14)  # reset the size if no subnetting is needed
+                self.rechenwegbox.config(height=14)
 
             # Spacing for visualization of the broadcast calculations in Rechenwegbox
             # (.center probably would have worked as well with conversion to str first?)
@@ -237,6 +237,8 @@ class NAC():  # Netzadresse
             else:
                 self.rechenwegbox.insert("end",
                                          f"30 Bit - {CIDR} Bit = {30 - CIDR} Bit = {2 ** (30 - CIDR)} (2^{30 - CIDR})")
+                self.rechenwegbox.insert("end",
+                                         f"\n\nSubnetze gibt es immer nur in Zweierpotenzschritten. Falls eine \nandere gesucht wird (z.B. '7'), dann muss die nächsthöhere in der\nListe gewählt werden ('8').")
 
         ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
@@ -356,11 +358,15 @@ class ISC:  # Bildgröße
         self.frame_header = ttk.Frame(frame)
         self.frame_header.pack()
 
+        #s = ttk.Style()
+        #s.configure("TFrame", background="orange")
+
         # Frame2 -> Logo & Text
-        # self.logo = PhotoImage(file="testlogo2.png", master=frame)
+        self.logo = PhotoImage(file="testlogo2.png", master=frame)
         ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, rowspan=2, stick="w")
         ttk.Label(self.frame_header, text="Bild- und Videodateigrößenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
-        ttk.Label(self.frame_header, wraplength=400, text="\n Berechnung der Größe von Bild und Videodateien.\n\n""Bitte nur Zahlen ohne Einheiten eintippen\n").grid(row=1, column=1)
+        ttk.Label(self.frame_header, wraplength=600, text="\n Berechnung der Größe von Bild und Videodateien.\n\n""Bitte nur Zahlen ohne Einheiten eintippen\n").grid(row=1, column=1)
+
         # Frame2-Body
         self.frame_content = ttk.Frame(frame)
         self.frame_content.pack()
@@ -381,12 +387,14 @@ class ISC:  # Bildgröße
         def disableDPI_enablePX():
             self.dpiWidthEntry.configure(state=["disabled"])
             self.dpiHeightEntry.configure(state=["disabled"])
+            self.dpiEntry.configure(state=["disabled"])
             self.pxWidthEntry.configure(state=["!disabled"])
             self.pxHeightEntry.configure(state=["!disabled"])
 
         def disablePX_enableDPI():
             self.dpiWidthEntry.configure(state=["!disabled"])
             self.dpiHeightEntry.configure(state=["!disabled"])
+            self.dpiEntry.configure(state=["!disabled"])
             self.pxWidthEntry.configure(state=["disabled"])
             self.pxHeightEntry.configure(state=["disabled"])
 
@@ -403,26 +411,42 @@ class ISC:  # Bildgröße
         self.boolvar.set(False)
         self.checkbtnVideo = ttk.Checkbutton(self.frame_video_check, variable=self.boolvar, text="Video?", command=lambda: enableVideoFrame() if self.boolvar.get()==True else disableVideoFrame())
         self.checkbtnVideo.grid(row=0, column=0, padx=0, pady=0)
-        self.v = IntVar()
-        self.pxRadio = ttk.Radiobutton(self.frame_content_dimensions,text="Pixel [Px]", variable=self.v, value=1, command=lambda: disableDPI_enablePX())
+        self.PXorDPI = IntVar()
+        self.pxRadio = ttk.Radiobutton(self.frame_content_dimensions,text="Pixel [Px]", variable=self.PXorDPI, value=1, command=lambda: disableDPI_enablePX())
         self.pxRadio.grid(row=0, column=0)
-        self.pxHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
-        self.pxHeightEntry.grid(row=0, column=1, padx=0, pady=0)
+        self.pxHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=5)
+        self.pxHeightEntry.grid(row=0, column=1, padx=0, pady=0, sticky="w")
         self.pxHeightEntry.insert(0, "3200")
-        ttk.Label(self.frame_content_dimensions, text="x").grid(row=0, column=2, padx=0, pady=0)
-        self.pxWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
-        self.pxWidthEntry.grid(row=0, column=3)
+        ttk.Label(self.frame_content_dimensions, text="x    ").grid(row=0, column=2, padx=0, pady=0)
+        self.pxWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=5)
+        self.pxWidthEntry.grid(row=0, column=3, sticky="w")
         self.pxWidthEntry.insert(0, "1800")
 
-        self.dpiRadio = ttk.Radiobutton(self.frame_content_dimensions, text="DPI [cm]", variable=self.v, value=2, command=lambda: disablePX_enableDPI())
+        self.dpiRadio = ttk.Radiobutton(self.frame_content_dimensions, text="DPI [cm]", variable=self.PXorDPI, value=2, command=lambda: disablePX_enableDPI())
         self.dpiRadio.grid(row=1, column=0)
-        self.dpiHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
-        self.dpiHeightEntry.grid(row=1, column=1)
-        self.dpiHeightEntry.insert(0, "24")
-        ttk.Label(self.frame_content_dimensions, text="x").grid(row=1, column=2)
-        self.dpiWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center")
-        self.dpiWidthEntry.grid(row=1, column=3)
-        self.dpiWidthEntry.insert(0, "16")
+        self.dpiHeightEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=5)
+        self.dpiHeightEntry.grid(row=1, column=1, sticky="w")
+        self.dpiHeightEntry.insert(0, "29.7")
+        ttk.Label(self.frame_content_dimensions, text="x", width=1).grid(row=1, column=2, sticky="w", padx=0)
+        self.dpiWidthEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=5)
+        self.dpiWidthEntry.grid(row=1, column=3, sticky="w")
+        self.dpiWidthEntry.insert(0, "21.0")
+        ttk.Label(self.frame_content_dimensions, text="DPI:",width=4, borderwidth=0).grid(row=1, column=4, padx=0, pady=0, sticky="w")
+        self.dpiEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=4)
+        self.dpiEntry.grid(row=1, column=5, sticky="w")
+        self.dpiEntry.insert(0, "300")
+
+        self.compressionLabel = ttk.Label(self.frame_content_dimensions, text="Kompression [%]", justify="center")
+        self.compressionPercent = ttk.Spinbox(self.frame_content_dimensions, justify="center", width=3, from_=0, to=99, increment=5)
+        self.compressionLabel.grid(row=5, column=0)
+        self.compressionPercent.grid(row=5, column=1)
+        self.compressionPercent.insert(0, "50")
+
+        self.colorDepthLabel = ttk.Label(self.frame_content_dimensions, text="Farbtiefe:", justify="center")
+        self.colorDepthEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=4)
+        self.colorDepthLabel.grid(row=5, column=4)
+        self.colorDepthEntry.grid(row=5, column=5)
+        self.colorDepthEntry.insert(0, "8")
 
         self.videoFPS = ttk.Entry(self.frame_content_video, width=4)
         self.videoFPS.insert(0, "24")
@@ -457,18 +481,17 @@ class ISC:  # Bildgröße
         unitList = ["Bit", "Byte", "KB", "MB", "GB", "TB", "KiB", "MiB", "GiB", "TiB"]
 
         self.unitsLabel = ttk.Label(self.frame_content_dimensions, text="Umrechnung in?", justify="center")
-        self.unitsLabel.grid(row=4, column=0)
-        self.units = ttk.Combobox(self.frame_content_dimensions, values=unitList, width=6, justify="center")
+        self.unitsLabel.grid(row=6, column=0)
+        self.units = ttk.Combobox(self.frame_content_dimensions, values=unitList, width=5, justify="center")
         self.units.insert(0, "MiB")
         self.units.configure(state="readonly")
-        self.units.grid(row=4, column=1)
+        self.units.grid(row=6, column=1)
 
         # Set radiobutton default to PX, disable DPI entry, disable Video
-        self.v.set(1)
-        self.dpiWidthEntry.configure(state=["disabled"])
-        self.dpiHeightEntry.configure(state=["disabled"])
+        self.PXorDPI.set(1)
+        disableDPI_enablePX()
 
-        self.rechenwegbox = Text(self.frame_content, width=65, height=12)
+        self.rechenwegbox = Text(self.frame_content, width=130, height=10)
         self.rechenwegbox.grid(row=4, column=0, columnspan=2)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -477,7 +500,22 @@ class ISC:  # Bildgröße
 
         def calc():
             self.rechenwegbox.delete("1.0", "end")
-            self.rechenwegbox.insert("end", "Noch nicht implementiert.")
+
+            # Height/Width from either PX or DPI
+            if self.PXorDPI.get() == 1:
+                height = int(self.pxHeightEntry.get())
+                width = int(self.pxWidthEntry.get())
+            elif self.PXorDPI.get() == 2:
+                dpi = int(self.dpiEntry.get())
+                height = int(float(self.dpiHeightEntry.get()) / 2.54 * dpi)
+                width = int(float(self.dpiWidthEntry.get()) / 2.54 * dpi)
+            colordepth = int(self.colorDepthEntry.get())
+            compression = (100-int(self.compressionPercent.get()))/100
+
+            imageSize = height * width * colordepth * compression
+            print(f"{height} * {width} * {colordepth} * {compression} = {imageSize} Bit")
+
+
 
         ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
@@ -538,5 +576,3 @@ def main():
 # Making sure that this only runs if it is the main file
 if __name__ == "__main__":
     main()
-
-
