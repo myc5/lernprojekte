@@ -17,6 +17,25 @@ class ITT: #ITT-Helper Main Window
         master.resizable(False, False)
         #master.geometry("600x400")
 
+        # Menu
+        master.option_add('*tearOff', False)
+        menubar = Menu(master)
+        master.config(menu=menubar)
+
+        Datei = Menu(menubar)
+        Bearbeiten = Menu(menubar)
+        Hilfe = Menu(menubar)
+
+        menubar.add_cascade(menu=Datei, label="Datei")
+        menubar.add_cascade(menu=Bearbeiten, label="Bearbeiten")
+        menubar.add_cascade(menu=Hilfe, label="Hilfe")
+
+        def switchTab(x):
+            notebook.select(x)
+
+        Datei.add_command(label="Öffne Quizdatei", command = None)
+        Datei.add_command(label="Speichere Quizdatei", command = None)
+
         # Style stuff, leave for later
         """self.bg = "#7393B3"
         self.font = ("Verdana", 12)
@@ -35,19 +54,22 @@ class ITT: #ITT-Helper Main Window
         self.notebook = ttk.Notebook(master)
         self.notebook.pack()
 
-        frame1 = ttk.Frame(self.notebook)
-        frame2 = ttk.Frame(self.notebook)
-        frame3 = ttk.Frame(self.notebook)
+        NAC_tab = ttk.Frame(self.notebook)
+        ISC_tab = ttk.Frame(self.notebook)
+        TSC_tab = ttk.Frame(self.notebook)
+        Quiz_tab = ttk.Frame(self.notebook)
 
-        self.notebook.add(frame1, text="Netzadresse")
-        netAddressCalculator = NAC(frame1, self.logo)
+        self.notebook.add(NAC_tab, text="Netzadresse")
+        netAddressCalculator = NAC(NAC_tab, self.logo)
 
-        self.notebook.add(frame2, text="Bildgröße")
-        imageSizeCalculator = ISC(frame2, self.logo2)
+        self.notebook.add(ISC_tab, text="Bildgröße")
+        imageSizeCalculator = ISC(ISC_tab, self.logo2)
 
-        self.notebook.add(frame3, text="Datei-Transfer")
-        transferSpeedCalculator = TSC(frame3, self.logo3)
+        self.notebook.add(TSC_tab, text="Datei-Transfer")
+        transferSpeedCalculator = TSC(TSC_tab, self.logo3)
 
+        self.notebook.add(Quiz_tab, text="Quiz")
+        quiz = Quiz(Quiz_tab, self.logo)
 
 class NAC():  # Netzadresse
 
@@ -61,7 +83,6 @@ class NAC():  # Netzadresse
         self.frame_header.pack()
 
         # Frame1 -> Logo & Text
-        self.logo = PhotoImage(file="testlogo.png", master=frame)
         ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2)
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength=600,
@@ -499,6 +520,11 @@ class ISC:  # Bildgröße
         disableVideoFrame()
 
         def calc():
+            video = False
+            unitDict = {"Bit": 1, "Byte": 1 / 8, "KB": 1 / 1000, "MB": 1 / (1000 ** 2), "GB": 1 / (1000 ** 3),
+                        "TB": 1 / (1000 ** 4),
+                        "KiB": 1 / 1024, "MiB": 1 / (1024 ** 2), "GiB": 1 / (1024 ** 3), "TiB": 1 / (1024 ** 4)}
+
             self.rechenwegbox.delete("1.0", "end")
 
             # Height/Width from either PX or DPI
@@ -510,12 +536,48 @@ class ISC:  # Bildgröße
                 height = int(float(self.dpiHeightEntry.get()) / 2.54 * dpi)
                 width = int(float(self.dpiWidthEntry.get()) / 2.54 * dpi)
             colordepth = int(self.colorDepthEntry.get())
-            compression = (100-int(self.compressionPercent.get()))/100
+            compression = (100 - int(self.compressionPercent.get())) / 100
 
-            imageSize = height * width * colordepth * compression
-            print(f"{height} * {width} * {colordepth} * {compression} = {imageSize} Bit")
+            # These calculation always need to happen to proceed
+            imageSizeBit = height * width * colordepth * compression
 
+            unit = self.units.get()
+            if unit not in ("Bit", "Byte"):  # divide by 8 here instead of adding it to each case in the Dictionary
+                unitConversion = unitDict[unit] / 8
+            else:
+                unitConversion = unitDict[unit]
 
+            imageSize = imageSizeBit * unitConversion
+
+            # If it is a video, we continue:
+            if self.boolvar.get():
+                video = True
+                h = int(self.videoLengthHours.get())
+                m = int(self.videoLengthMinutes.get())
+                s = int(self.videoLengthSeconds.get())
+                fps = int(self.videoFPS.get())
+                videoDuration = h * 3600 + m * 60 + s
+                videoSize = imageSizeBit * fps * videoDuration * unitConversion
+                self.rechenwegbox.insert("end", f"Die Dateigröße des Videos beträgt: {videoSize:.2f} {unit}.\n")
+            else:
+                self.rechenwegbox.insert("end", f"Die Dateigröße des Bildes beträgt: {imageSize:.2f} {unit}.\n")
+
+            self.rechenwegbox.insert("end", "\nDie Berechnung der Bildgröße folgt dieser Formel: \n\n"
+                                            "[Höhe in Pixel] * [Breite in Pixel] * [Farbtiefe in Bit] * [Kompression in %] = [Bildgröße in Bit]\n")
+            if self.PXorDPI.get() == 2:
+                self.rechenwegbox.insert("end",
+                                         "In diesem Fall haben wir die Pixelwerte noch nicht, können es aber recht einfach umrechnen: \n"
+                                         "Höhe in Pixel = Höhe in cm * DPI / 2,54  bzw. Breite in Pixel = Breite in cm * DPI / 2,54\n")
+            # self.rechenwegbox.insert("end", "So kommt man dann auf das Teilergebnis bevor Einheitenumwandlung: ")
+            self.rechenwegbox.insert("end",
+                                     f"     {height}       *       {width}        *           {colordepth}        *        {compression}         =   {imageSizeBit} Bit\n\n")
+            self.rechenwegbox.insert("end",
+                                     f"Umrechnung in {unit}: {imageSizeBit} Bit / {unitConversion} = {imageSize:.2f} {unit}:\n\n")
+            if video:
+                self.rechenwegbox.insert("end",
+                                         f"Videos sind eine Abfolge von Bildern pro x Sekunden, darüber wird dann die Videogröße berechnet:\n")
+                self.rechenwegbox.insert("end",
+                                         f"{imageSize:.2f} {unit} * {fps} Bilder pro Sekunde * {videoDuration} Sekunden = {videoSize:.2f} {unit}")
 
         ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
@@ -541,6 +603,27 @@ class TSC: #Datei-Transfer
         self.frame_content = ttk.Frame(frame)
         self.frame_content.pack()
 
+class Quiz():  # Quiz
+
+    def __init__(self, frame, logo):
+
+        self.logo = logo
+
+        # Frame4 -> Header
+        self.frame = frame
+        self.frame_header = ttk.Frame(frame)
+        self.frame_header.pack()
+
+        # Frame4 -> Logo & Text
+        ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2)
+        ttk.Label(self.frame_header, text="Quiz").grid(row=0, column=1)  # style = "Header.TLabel"
+        ttk.Label(self.frame_header, wraplength=600,
+                  text="\n__Quiz__ NYI.\n").grid(
+            row=1, column=1)
+
+        # Frame4-Body
+        self.frame_content = ttk.Frame(frame)
+        self.frame_content.pack()
 
 """
 Unused stuff for now
