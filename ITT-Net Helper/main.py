@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog
 from idlelib.tooltip import Hovertip
 import NetzAdCalc as nac
 import Subnetting as sbn
@@ -11,6 +13,7 @@ class ITT: #ITT-Helper Main Window
         self.logo = logo
         self.logo2 = logo2
         self.logo3 = logo3
+        self.filename = "default.csv"
 
         # Root
         master.title("ITT-NET Helper")
@@ -30,11 +33,23 @@ class ITT: #ITT-Helper Main Window
         menubar.add_cascade(menu=Bearbeiten, label="Bearbeiten")
         menubar.add_cascade(menu=Hilfe, label="Hilfe")
 
+        # Maybe use this to force a switch to Quiz tab when a quiz file is opened?
         def switchTab(x):
             notebook.select(x)
 
-        Datei.add_command(label="Öffne Quizdatei", command = None)
+        def openFile():
+            if messagebox.askyesno(title="Quizdatei laden?", message="Dies ist noch nicht implementiert.\n\n Fortfahren?") == True:
+                self.filename = filedialog.askopenfile()
+                print(filename.name)
+            return self.filename
+
+        Datei.add_command(label="Lade Quizdatei", command = openFile)
         Datei.add_command(label="Speichere Quizdatei", command = None)
+        Datei.add_separator()
+        Datei.add_command(label="Exit", command = lambda: master.destroy())
+
+
+
 
         # Style stuff, leave for later
         """self.bg = "#7393B3"
@@ -134,10 +149,10 @@ class NAC():  # Netzadresse
         self.entry_Netzadresse.insert(0, "192.168.110.0")
         Hovertip(self.entry_Netzadresse, 'Format: xxx.xxx.xxx.xxx')
 
-        self.ergebnisbox = Text(self.frame_content, width=65, height=14)
+        self.ergebnisbox = Text(self.frame_content, width=65, height=16)
         self.ergebnisbox.grid(row=4, column=0)
         self.ergebnisbox.insert("1.0", "Ergebnisbox")
-        self.rechenwegbox = Text(self.frame_content, width=65, height=14)
+        self.rechenwegbox = Text(self.frame_content, width=65, height=16)
         self.rechenwegbox.grid(row=4, column=1)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -192,8 +207,6 @@ class NAC():  # Netzadresse
             self.ergebnisbox.insert("end", f"Anzahl nutzbarer Hosts: {max_usable_hosts}\n")
             self.ergebnisbox.insert("end", f"Maximale Anzahl nutzbarer Subnetze: {max_subnets}\n")
             if max_subnets >= 4:
-                self.ergebnisbox.config(height=15)  # auto-adjust height of box if more space is needed
-                self.rechenwegbox.config(height=15)
                 self.ergebnisbox.insert("end", f"In wie viele Subnets teilen?    ")
                 self.subnetting = ttk.Button(self.ergebnisbox, text="Subnet!",
                                              command=lambda: subnetting(network_ID, CIDR))
@@ -212,9 +225,6 @@ class NAC():  # Netzadresse
                 self.ergebnisbox.window_create("insert", window=self.combo_subnetting)
                 self.ergebnisbox.window_create("insert", window=self.subnetting)
                 self.ergebnisbox.insert("end", f"\n\nBitte beachten: Subnetting ist übersichtshalber auf 64 begrenzt    ")
-            else:
-                self.ergebnisbox.config(height=14)  # reset the size if no subnetting is needed
-                self.rechenwegbox.config(height=14)
 
             # Spacing for visualization of the broadcast calculations in Rechenwegbox
             # (.center probably would have worked as well with conversion to str first?)
@@ -368,7 +378,6 @@ class NAC():  # Netzadresse
             for i in range(len(list_of_net_IDs)):
                 print(list_of_first_IPs[i], "|", list_of_last_IPs[i], "|", list_of_net_IDs[i], "|", list_of_bc_IPs[i])"""
 
-
 class ISC:  # Bildgröße
 
     def __init__(self, frame, logo):
@@ -512,7 +521,7 @@ class ISC:  # Bildgröße
         self.PXorDPI.set(1)
         disableDPI_enablePX()
 
-        self.rechenwegbox = Text(self.frame_content, width=130, height=10)
+        self.rechenwegbox = Text(self.frame_content, width=130, height=12)
         self.rechenwegbox.grid(row=4, column=0, columnspan=2)
         self.rechenwegbox.insert("1.0", "Detaillierter Rechenweg")
 
@@ -571,8 +580,24 @@ class ISC:  # Bildgröße
             # self.rechenwegbox.insert("end", "So kommt man dann auf das Teilergebnis bevor Einheitenumwandlung: ")
             self.rechenwegbox.insert("end",
                                      f"     {height}       *       {width}        *           {colordepth}        *        {compression}         =   {imageSizeBit} Bit\n\n")
-            self.rechenwegbox.insert("end",
-                                     f"Umrechnung in {unit}: {imageSizeBit} Bit / {unitConversion} = {imageSize:.2f} {unit}:\n\n")
+            # just for a fun: a needlessly convoluted method of making the conversion more explicit by reusing the unitDict-Dictionary:
+            conversionString = "/8 "
+
+            if unit == "Byte":
+                self.rechenwegbox.insert("end",
+                                         f"Umrechnung in {unit}: {imageSizeBit} Bit /8 = {imageSize:.2f} {unit}:\n\n")
+            elif unit != "Bit":
+                try:
+                    count = list(unitDict.keys())[2:6].index(unit) + 1  # Check if unit is in the decimal portion
+                    for i in range(count):
+                        conversionString += "/1000 "
+                except ValueError:  # if it is not, ignore the error and check for it in the binary portion
+                    count = list(unitDict.keys())[6:].index(unit) + 1
+                    for i in range(count):
+                        conversionString += "/1024 "
+
+                self.rechenwegbox.insert("end", f"Umrechnung in {unit}: {imageSizeBit} Bit {conversionString}= {imageSize:.2f} {unit}:\n\n")
+                
             if video:
                 self.rechenwegbox.insert("end",
                                          f"Videos sind eine Abfolge von Bildern pro x Sekunden, darüber wird dann die Videogröße berechnet:\n")
@@ -659,3 +684,4 @@ def main():
 # Making sure that this only runs if it is the main file
 if __name__ == "__main__":
     main()
+
