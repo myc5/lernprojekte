@@ -43,6 +43,9 @@ class ITT: #ITT-Helper Main Window
                 print(filename.name)
             return self.filename
 
+        def errorMessage(errorMessage="Bitte überprüfe deine Eingaben."):
+            messagebox.showerror(title="Fehler!", message=errorMessage)
+
         Datei.add_command(label="Lade Quizdatei", command = openFile)
         Datei.add_command(label="Speichere Quizdatei", command = None)
         Datei.add_separator()
@@ -581,23 +584,23 @@ class ISC:  # Bildgröße
             self.rechenwegbox.insert("end",
                                      f"     {height}       *       {width}        *           {colordepth}        *        {compression}         =   {imageSizeBit} Bit\n\n")
             # just for a fun: a needlessly convoluted method of making the conversion more explicit by reusing the unitDict-Dictionary:
-            conversionString = "/8 "
+            conversionString = "/8 (Byte) "
 
             if unit == "Byte":
                 self.rechenwegbox.insert("end",
                                          f"Umrechnung in {unit}: {imageSizeBit} Bit /8 = {imageSize:.2f} {unit}:\n\n")
             elif unit != "Bit":
                 try:
-                    count = list(unitDict.keys())[2:6].index(unit) + 1  # Check if unit is in the decimal portion
-                    for i in range(count):
-                        conversionString += "/1000 "
+                    count = list(unitDict.keys())[2:6].index(unit)# Check if unit is in the decimal portion
+                    for i in range(count+1):
+                        conversionString += f"/1000 ({list(unitDict.keys())[2:6][i]}) "
                 except ValueError:  # if it is not, ignore the error and check for it in the binary portion
-                    count = list(unitDict.keys())[6:].index(unit) + 1
-                    for i in range(count):
-                        conversionString += "/1024 "
+                    count = list(unitDict.keys())[6:].index(unit)
+                    for i in range(count+1):
+                        conversionString += f"/1024 ({list(unitDict.keys())[6:][i]}) "
 
                 self.rechenwegbox.insert("end", f"Umrechnung in {unit}: {imageSizeBit} Bit {conversionString}= {imageSize:.2f} {unit}:\n\n")
-                
+
             if video:
                 self.rechenwegbox.insert("end",
                                          f"Videos sind eine Abfolge von Bildern pro x Sekunden, darüber wird dann die Videogröße berechnet:\n")
