@@ -8,17 +8,17 @@ import Subnetting as sbn
 
 class ITT: #ITT-Helper Main Window
 
-    def __init__(self, master, logo, logo2, logo3):
+    def __init__(self, master, logo1, logo2, logo3, logo4):
 
-        self.logo = logo
-        self.logo2 = logo2
-        self.logo3 = logo3
+        self.net_logo = logo1
+        self.isc_logo = logo2
+        self.tsc_logo = logo3
+        self.quiz_logo = logo4
         self.filename = "default.csv"
 
         # Root
         master.title("ITT-NET Helper")
         master.resizable(False, False)
-        #master.geometry("600x400")
 
         # Menu
         master.option_add('*tearOff', False)
@@ -33,7 +33,7 @@ class ITT: #ITT-Helper Main Window
         menubar.add_cascade(menu=Bearbeiten, label="Bearbeiten")
         menubar.add_cascade(menu=Hilfe, label="Hilfe")
 
-        # Maybe use this to force a switch to Quiz tab when a quiz file is opened?
+        # Maybe use this to force a switch to Quiz tab when a quiz file is opened? Look into it later
         def switchTab(x):
             notebook.select(x)
 
@@ -43,27 +43,14 @@ class ITT: #ITT-Helper Main Window
                 print(filename.name)
             return self.filename
 
+        def errorMessage(errorMessage="Bitte überprüfe deine Eingaben."):
+            messagebox.showerror(title="Fehler!", message=errorMessage)
+
         Datei.add_command(label="Lade Quizdatei", command = openFile)
         Datei.add_command(label="Speichere Quizdatei", command = None)
         Datei.add_separator()
         Datei.add_command(label="Exit", command = lambda: master.destroy())
 
-
-
-
-        # Style stuff, leave for later
-        """self.bg = "#7393B3"
-        self.font = ("Verdana", 12)
-        self.font_header = ("Verdana", 18, "bold")
-        
-        master.configure(background=self.bg)
-        
-        self.style=ttk.Style()
-        
-        self.style.configure("TFrame", background = self.bg)
-        self.style.configure("TButton", background=self.bg)
-        self.style.configure("TLabel", background=self.bg, font=self.font,)
-        self.style.configure("Header.TLabel", background=self.bg, font=self.font_header)"""
 
         # Root -> Notebook
         self.notebook = ttk.Notebook(master)
@@ -75,22 +62,22 @@ class ITT: #ITT-Helper Main Window
         Quiz_tab = ttk.Frame(self.notebook)
 
         self.notebook.add(NAC_tab, text="Netzadresse")
-        netAddressCalculator = NAC(NAC_tab, self.logo)
+        netAddressCalculator = NAC(NAC_tab, self.net_logo)
 
         self.notebook.add(ISC_tab, text="Bildgröße")
-        imageSizeCalculator = ISC(ISC_tab, self.logo2)
+        imageSizeCalculator = ISC(ISC_tab, self.isc_logo)
 
         self.notebook.add(TSC_tab, text="Datei-Transfer")
-        transferSpeedCalculator = TSC(TSC_tab, self.logo3)
+        transferSpeedCalculator = TSC(TSC_tab, self.tsc_logo)
 
         self.notebook.add(Quiz_tab, text="Quiz")
-        quiz = Quiz(Quiz_tab, self.logo)
+        quiz = Quiz(Quiz_tab, self.quiz_logo)
 
 class NAC():  # Netzadresse
 
     def __init__(self, frame, logo):
 
-        self.logo = logo
+        self.logo = logo.subsample(5, 5)
 
         # Frame1 -> Header
         self.frame = frame
@@ -98,6 +85,7 @@ class NAC():  # Netzadresse
         self.frame_header.pack()
 
         # Frame1 -> Logo & Text
+
         ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2)
         ttk.Label(self.frame_header, text="Netzadressenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength=600,
@@ -392,8 +380,7 @@ class ISC:  # Bildgröße
         #s.configure("TFrame", background="orange")
 
         # Frame2 -> Logo & Text
-        self.logo = PhotoImage(file="testlogo2.png", master=frame)
-        ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, rowspan=2, stick="w")
+        ttk.Label(self.frame_header, image=logo).grid(row=0, column=0, rowspan=2)
         ttk.Label(self.frame_header, text="Bild- und Videodateigrößenrechner").grid(row=0, column=1)  # style = "Header.TLabel"
         ttk.Label(self.frame_header, wraplength=600, text="\n Berechnung der Größe von Bild und Videodateien.\n\n""Bitte nur Zahlen ohne Einheiten eintippen\n").grid(row=1, column=1)
 
@@ -581,23 +568,23 @@ class ISC:  # Bildgröße
             self.rechenwegbox.insert("end",
                                      f"     {height}       *       {width}        *           {colordepth}        *        {compression}         =   {imageSizeBit} Bit\n\n")
             # just for a fun: a needlessly convoluted method of making the conversion more explicit by reusing the unitDict-Dictionary:
-            conversionString = "/8 "
+            conversionString = "/8 (Byte) "
 
             if unit == "Byte":
                 self.rechenwegbox.insert("end",
                                          f"Umrechnung in {unit}: {imageSizeBit} Bit /8 = {imageSize:.2f} {unit}:\n\n")
             elif unit != "Bit":
                 try:
-                    count = list(unitDict.keys())[2:6].index(unit) + 1  # Check if unit is in the decimal portion
-                    for i in range(count):
-                        conversionString += "/1000 "
+                    count = list(unitDict.keys())[2:6].index(unit)# Check if unit is in the decimal portion
+                    for i in range(count+1):
+                        conversionString += f"/1000 ({list(unitDict.keys())[2:6][i]}) "
                 except ValueError:  # if it is not, ignore the error and check for it in the binary portion
-                    count = list(unitDict.keys())[6:].index(unit) + 1
-                    for i in range(count):
-                        conversionString += "/1024 "
+                    count = list(unitDict.keys())[6:].index(unit)
+                    for i in range(count+1):
+                        conversionString += f"/1024 ({list(unitDict.keys())[6:][i]}) "
 
                 self.rechenwegbox.insert("end", f"Umrechnung in {unit}: {imageSizeBit} Bit {conversionString}= {imageSize:.2f} {unit}:\n\n")
-                
+
             if video:
                 self.rechenwegbox.insert("end",
                                          f"Videos sind eine Abfolge von Bildern pro x Sekunden, darüber wird dann die Videogröße berechnet:\n")
@@ -653,6 +640,20 @@ class Quiz():  # Quiz
 """
 Unused stuff for now
 
+        # Style stuff, leave for later
+        self.bg = "#7393B3"
+        self.font = ("Verdana", 12)
+        self.font_header = ("Verdana", 18, "bold")
+        
+        master.configure(background=self.bg)
+        
+        self.style=ttk.Style()
+        
+        self.style.configure("TFrame", background = self.bg)
+        self.style.configure("TButton", background=self.bg)
+        self.style.configure("TLabel", background=self.bg, font=self.font,)
+        self.style.configure("Header.TLabel", background=self.bg, font=self.font_header)
+
 Clear button
         def clear():
             self.spin_CIDR.delete(0, "end")
@@ -673,10 +674,11 @@ def main():
     root = Tk()
 
     # Turns out we have to create the images here or they won't show up in the Class for all but the first tab
-    logo = PhotoImage(file="testlogo.png")
-    logo2 = PhotoImage(file="testlogo2.png")
-    logo3 = PhotoImage(file="testlogo3.png")
-    itt = ITT(root, logo, logo2, logo3)
+    logo1 = PhotoImage(file="Logo_Net.png")
+    logo2 = PhotoImage(file="Logo_Transfer.png")
+    logo3 = PhotoImage(file="Logo_Image.png")
+    logo4 = PhotoImage(file="Logo_Quiz.png")
+    itt = ITT(root, logo1, logo2, logo3, logo4)
 
     # Start the GUI
     root.mainloop()
