@@ -180,7 +180,7 @@ class GUI:
         def errorMessage(title="Fehler!", errorMessage="Bitte überprüfe deine Eingaben."):
             messagebox.showerror(title, message=errorMessage)
 
-        def checkFName(nameString):
+        def checkName(nameString, string="Name"):
             originalNameString = nameString
 
             # Formatting:
@@ -209,28 +209,44 @@ class GUI:
             # Check if blacklist is enabled and whether the name is in it
             if self.useNamesBlacklist:
                 if nameString in self.blacklistedWords:
-                    errorMessage("Unzulässiger Name", f"Der Name ist nicht erlaubt.")
-                    self.fNameLabel.configure(fg="red")
-                    return False
+                    errorMessage(f"Unzulässiger {string}", f"Dieser {string} ist nicht erlaubt.")
+                    if string == "Vorname":
+                        self.fNameLabel.configure(fg="red")
+                        return False
+                    else:
+                        self.lNameLabel.configure(fg="red")
+                        return False
 
             # Check  name for length after removing the spaces
             if len(nameString) > self.allowedNameLength[1]:
-                errorMessage("Vorname zu lang",
-                             f"Vorname ist zu lang. Es dürfen maximal {self.allowedNameLength[1]} Buchstaben benutzt werden.")
-                self.fNameLabel.configure(fg="red")
-                return False
+                errorMessage(f"{string} zu lang",
+                             f"{string} ist zu lang. Es dürfen maximal {self.allowedNameLength[1]} Buchstaben benutzt werden.")
+                if string == "Vorname":
+                    self.fNameLabel.configure(fg="red")
+                    return False
+                else:
+                    self.lNameLabel.configure(fg="red")
+                    return False
             if len(nameString) < self.allowedNameLength[0]:
-                errorMessage("Vorname zu kurz",
-                             f"Vorname ist zu kurz. Es müssen mindestens {self.allowedNameLength[0]} Buchstaben benutzt werden.")
-                self.fNameLabel.configure(fg="red")
-                return False
+                errorMessage(f"{string} zu kurz",
+                             f"{string} ist zu kurz. Es müssen mindestens {self.allowedNameLength[0]} Buchstaben benutzt werden.")
+                if string == "Vorname":
+                    self.fNameLabel.configure(fg="red")
+                    return False
+                else:
+                    self.lNameLabel.configure(fg="red")
+                    return False
             # isalnum() can detect non-letters; unfortunately it also detects hyphens which are necessary for double names
             # if no hypens are in the string but special characters or digits are, we stop
             if not nameString.isalnum() and "-" not in nameString:
-                errorMessage("Vorname beinhaltet unzulässige Sonderzeichen",
-                             f"Vorname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
-                self.fNameLabel.configure(fg="red")
-                return False
+                errorMessage(f"{string} beinhaltet unzulässige Sonderzeichen",
+                             f"{string} beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
+                if string == "Vorname":
+                    self.fNameLabel.configure(fg="red")
+                    return False
+                else:
+                    self.lNameLabel.configure(fg="red")
+                    return False
             # if there are as many non-letters as hyphens, we proceed; otherwise it means there are non-hypen special characters and we abort
             countHyphen, countNonChars = 0, 0
             for i in nameString:
@@ -240,117 +256,52 @@ class GUI:
                 if i.isalnum() == False:
                     countNonChars = + 1
             if countNonChars > countHyphen:
-                errorMessage("Vorname beinhaltet unzulässige Sonderzeichen",
-                             f"Vorname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
-                self.fNameLabel.configure(fg="red")
-                return False
-            # Check for numbers
-            for i in nameString:
-                if i.isdigit() == True:
-                    errorMessage("Vorname beinhaltet unzulässige Sonderzeichen",
-                                 f"Nachname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
+                errorMessage(f"{string} beinhaltet unzulässige Sonderzeichen",
+                             f"{string} beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
+                if string == "Vorname":
                     self.fNameLabel.configure(fg="red")
                     return False
-                    # Attempt auto-correct
-            if originalNameString != nameString and originalNameString not in self.autoCorrectExceptions:
-                question = yesnocancelMessage("Vornamen-Korrektur",
-                                              f"Vorname wurde autokorrigiert.\n\n{originalNameString} --> {nameString}\n\nZum Fortfahren mit korrigierten Name mit 'Yes' bestätigen, für den ursprünglichen Namen mit 'No' speichern, und 'Cancel' um per Hand zu korrigieren\n\n(Falls 'No' ausgewählt wird, wird dieser Name nicht mehr korrigiert)")
-                if question == True:
-                    self.fName = nameString
-                    self.fNameEntry.delete(0, "end")
-                    self.fNameEntry.insert(0, nameString)
-                elif question == False:
-                    self.fName = originalNameString
-                    self.autoCorrectExceptions.append(self.fName)
-                else:
-                    self.fNameLabel.configure(fg="red")
-                    return False
-            return True
-
-        def checkLName(nameString):
-            originalNameString = nameString
-
-            # Formatting:
-            # Remove leading and trailing white spaces:
-            nameString = nameString.strip()
-
-            # Attempt to fix capitalization and replace spaces in between with "-", with the assumption that it was meant to be a double name
-            nameString = nameString.lower()
-            tempString = ""
-            tempString2 = ""
-            for i in nameString.split(" "):
-                tempString += i.capitalize()
-                try:
-                    if tempString[-1] != "-":
-                        tempString += "-"
-                except IndexError:
-                    pass
-            for i in tempString.split("-"):
-                tempString2 += i.capitalize()
-                tempString2 += "-"
-            while tempString2[-1] == "-":
-                tempString2 = tempString2[:-1]
-            nameString = tempString2
-
-            # Check if blacklist is enabled and whether the name is in it
-            if self.useNamesBlacklist:
-                if nameString in self.blacklistedWords:
-                    errorMessage("Unzulässiger Name", f"Der Name ist nicht erlaubt.")
-                    self.lNameLabel.configure(fg="red")
-                    return False
-
-            # Check  name for length after removing the spaces
-            if len(nameString) > self.allowedNameLength[1]:
-                errorMessage("Nachname zu lang",
-                             f"Nachname ist zu lang. Es dürfen maximal {self.allowedNameLength[1]} Buchstaben benutzt werden.")
-                self.lNameLabel.configure(fg="red")
-                return False
-            if len(nameString) < self.allowedNameLength[0]:
-                errorMessage("Nachname zu kurz",
-                             f"Nachname ist zu kurz. Es müssen mindestens {self.allowedNameLength[0]} Buchstaben benutzt werden.")
-                self.lNameLabel.configure(fg="red")
-                return False
-            # isalnum() can detect non-letters (but not numbers); unfortunately it also detects hyphens which are necessary for double names
-            # if no hypens are in the string but special characters or digits are, we stop
-            if not nameString.isalnum() and "-" not in nameString:
-                errorMessage("Nachname beinhaltet unzulässige Sonderzeichen",
-                             f"Nachname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
-                self.lNameLabel.configure(fg="red")
-                return False
-            # if there are as many non-letters as hyphens, we proceed; otherwise it means there are non-hypen special characters and we abort
-            countHyphen, countNonChars = 0, 0
-            for i in nameString:
-                if i == "-":
-                    countHyphen = + 1
-            for i in nameString:
-                if i.isalnum() == False:
-                    countNonChars = + 1
-            if countNonChars > countHyphen:
-                errorMessage("Nachname beinhaltet unzulässige Sonderzeichen",
-                             f"Nachname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
-                self.lNameLabel.configure(fg="red")
-                return False
-            # Check for numbers
-            for i in nameString:
-                if i.isdigit() == True:
-                    errorMessage("Nachname beinhaltet unzulässige Sonderzeichen",
-                                 f"Nachname beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
-                    self.lNameLabel.configure(fg="red")
-                    return False
-                    # Attempt auto-correct
-            if originalNameString != nameString and originalNameString not in self.autoCorrectExceptions:
-                question = yesnocancelMessage("Nachnamen-Korrektur",
-                                              f"Nachname wurde autokorrigiert.\n\n{originalNameString} --> {nameString}\n\nZum Fortfahren mit korrigierten Name mit 'Yes' bestätigen, für den ursprünglichen Namen mit 'No' speichern, und 'Cancel' um per Hand zu korrigieren\n\n(Falls 'No' ausgewählt wird, wird dieser Name nicht mehr korrigiert)")
-                if question == True:
-                    self.lName = nameString
-                    self.lNameEntry.delete(0, "end")
-                    self.lNameEntry.insert(0, nameString)
-                elif question == False:
-                    self.lName = originalNameString
-                    self.autoCorrectExceptions.append(self.lName)
                 else:
                     self.lNameLabel.configure(fg="red")
                     return False
+            # Check for numbers
+            for i in nameString:
+                if i.isdigit() == True:
+                    errorMessage(f"{string} beinhaltet unzulässige Sonderzeichen",
+                                 f"{string} beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
+                    if string == "Vorname":
+                        self.fNameLabel.configure(fg="red")
+                        return False
+                    else:
+                        self.lNameLabel.configure(fg="red")
+                        return False
+            
+                    # Attempt auto-correct
+            if originalNameString != nameString and originalNameString not in self.autoCorrectExceptions:
+                question = yesnocancelMessage("{string}n-Korrektur",
+                                              f"{string} wurde autokorrigiert.\n\n{originalNameString} --> {nameString}\n\nZum Fortfahren mit korrigierten Name mit 'Yes' bestätigen, für den ursprünglichen Namen mit 'No' speichern, und 'Cancel' um per Hand zu korrigieren\n\n(Falls 'No' ausgewählt wird, wird dieser Name nicht mehr korrigiert)")
+                if string == "Vorname":
+                    if question == True:
+                        self.fName = nameString
+                        self.fNameEntry.delete(0, "end")
+                        self.fNameEntry.insert(0, nameString)
+                    elif question == False:
+                        self.fName = originalNameString
+                        self.autoCorrectExceptions.append(self.fName)
+                    else:
+                        self.fNameLabel.configure(fg="red")
+                        return False
+                if string == "Nachname":
+                    if question == True:
+                        self.nName = nameString
+                        self.nNameEntry.delete(0, "end")
+                        self.nNameEntry.insert(0, nameString)
+                    elif question == False:
+                        self.nName = originalNameString
+                        self.autoCorrectExceptions.append(self.nName)
+                    else:
+                        self.nNameLabel.configure(fg="red")
+                        return False
             return True
 
         def isLeapYear(year):
@@ -513,12 +464,12 @@ class GUI:
                     errorMessage("Ungültige ID", "ID darf nicht leer sein.")
                     return
             self.fName = self.fNameEntry.get()
-            if checkFName(self.fName):
+            if checkName(self.fName, "Vorname"):
                 self.fNameLabel.configure(fg="black")
             else:
                 return
             self.lName = self.lNameEntry.get()
-            if checkLName(self.lName):
+            if checkName(self.lName, "Nachname"):
                 self.lNameLabel.configure(fg="black")
             else:
                 return
