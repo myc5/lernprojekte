@@ -251,10 +251,10 @@ class GUI:
             countHyphen, countNonChars = 0, 0
             for i in nameString:
                 if i == "-":
-                    countHyphen = + 1
+                    countHyphen += 1
             for i in nameString:
                 if i.isalnum() == False:
-                    countNonChars = + 1
+                    countNonChars += 1
             if countNonChars > countHyphen:
                 errorMessage(f"{string} beinhaltet unzulässige Sonderzeichen",
                              f"{string} beinhaltet unzulässige Sonderzeichen oder Leerzeichen. Benutzen Sie '-' für Doppelnamen.")
