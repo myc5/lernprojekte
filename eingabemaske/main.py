@@ -24,7 +24,7 @@ class GUI:
 
         self.mainWindow.title("Eingabemaske")
 
-        self.mainWindow.option_add('*tearOff', False)
+        self.mainWindow.option_add("*tearOff", False)
 
         self.menubar = Menu(self.mainWindow)
         self.mainWindow.config(menu=self.menubar)
