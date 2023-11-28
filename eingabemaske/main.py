@@ -5,6 +5,7 @@ from tkinter import filedialog
 from datetime import datetime
 import json
 
+
 class Person:
     def __init__(self, id_, fName, lName, birthday, eMail, gender):
         self.id_ = id_
@@ -13,10 +14,12 @@ class Person:
         self.birthday = birthday
         self.eMail = eMail
         self.gender = gender
-    
-    def getAllValues(self): # This isn't used anywhere, was just for testing
-        allValues = {"id": self.id_, "Vorname":self.fName, "Nachname":self.lName, "Geburtstag (Alter)": self.birthday, "E-Mail": self.eMail, "Geschlecht": self.gender}
+
+    def getAllValues(self):  # This isn't used anywhere, was just for testing
+        allValues = {"id": self.id_, "Vorname": self.fName, "Nachname": self.lName, "Geburtstag (Alter)": self.birthday,
+                     "E-Mail": self.eMail, "Geschlecht": self.gender}
         return allValues
+
 
 class GUI:
     def __init__(self, master):
@@ -35,9 +38,9 @@ class GUI:
 
         self.menubar.add_cascade(menu=self.file, label="Datei")
         self.menubar.add_cascade(menu=self.edit, label="Bearbeiten")
-        
+
         # Not implemented
-        #self.menubar.add_cascade(menu=self.help, label="Hilfe")
+        # self.menubar.add_cascade(menu=self.help, label="Hilfe")
 
         self.file.add_command(label="Datei laden", command=lambda: loadFile())
         self.file.add_command(label="Datei speichern", command=lambda: saveFile())
@@ -64,7 +67,7 @@ class GUI:
 
         # Email config
         self.useEmailBlacklist = False;
-        self.eMailBlacklist = ["hotmail.com"]  # This is meant to be for domains, i.e. "google.com"
+        self.eMailBlacklist = ["hotmail.com"]  # This is meant to be for domains, i.e. "google.com", lower case and without the "@"
         self.useEmailWhitelist = False;
         self.eMailWhitelist = ["google.com"]  # not full addresses (though it can work for them as well)
 
@@ -91,7 +94,6 @@ class GUI:
         for i in range(len(self.treeViewConfig)):
             self.tree.column(i + 1, anchor="c")
             self.tree.heading(i + 1, text=self.treeViewConfig[i])
-            
 
         # Labels & Entries
         # Note: while the text can be changed, the variable names are fixed;
@@ -151,21 +153,21 @@ class GUI:
         self.addEntryBtn.grid(row=5, column=2)
         self.rmvEntryBtn.grid(row=5, column=4)
         self.saveBtn.grid(row=5, column=6)
+
         # testValues
         # insert(parent, index, iid=None, **kw)
 
         # self.testValues = ("Test", "Vorname", "Nachname", "23.08.2000 (23)" , "example@gmail.com", "m")
         # self.tree.insert("", "end", values=self.testValues)
-        
-        # All the functions 
-        
+
+        # All the functions
+
         def toggleIdSelect():
             if self.var1.get() == 1:
                 self.idEntry.configure(state="disabled")
             else:
                 self.idEntry.configure(state="normal")
 
-        
         def infoMessage(title="Dialogbox", dialogueMessage="Text hier"):
             messagebox.showinfo(title=title, message=dialogueMessage)
 
@@ -275,7 +277,7 @@ class GUI:
                     else:
                         self.lNameLabel.configure(fg="red")
                         return False
-            
+
                     # Attempt auto-correct
             if originalNameString != nameString and originalNameString not in self.autoCorrectExceptions:
                 question = yesnocancelMessage("{string}n-Korrektur",
@@ -377,9 +379,11 @@ class GUI:
                 return False
             if getAge(birthday) > self.allowedAgeRange[1] or getAge(birthday) < self.allowedAgeRange[0]:
                 self.birthdayLabel.configure(fg="red")
-                self.oldestAllowedBirthdate = [self.currentDay, self.currentMonth, self.currentYear - self.allowedAgeRange[1]]
+                self.oldestAllowedBirthdate = [self.currentDay, self.currentMonth,
+                                               self.currentYear - self.allowedAgeRange[1]]
 
-                self.youngestAllowedBirthdate = [self.currentDay, self.currentMonth, self.currentYear - self.allowedAgeRange[0]]
+                self.youngestAllowedBirthdate = [self.currentDay, self.currentMonth,
+                                                 self.currentYear - self.allowedAgeRange[0]]
                 range1 = str(self.oldestAllowedBirthdate[0]) + "." + str(self.oldestAllowedBirthdate[1]) + "." + str(
                     self.oldestAllowedBirthdate[2])
                 range2 = str(self.youngestAllowedBirthdate[0]) + "." + str(
@@ -404,8 +408,8 @@ class GUI:
                 accountName = eMail.split("@")[0]
                 domainName = eMail.split("@")[1]
             # Check whether Blacklist ist enabled and whether the E-Mail we are checking is using that domain
-            if (self.useEmailBlacklist and domainName in self.eMailBlacklist) or (
-                    self.useEmailWhitelist and domainName not in self.eMailWhitelist):
+            if (self.useEmailBlacklist and domainName.lower() in self.eMailBlacklist) or (
+                    self.useEmailWhitelist and domainName.lower() not in self.eMailWhitelist):
                 self.eMailLabel.configure(fg="red")
                 errorMessage("Ungültige E-Mail", "Diese E-Mail ist nicht erlaubt.")
                 return False
@@ -419,7 +423,7 @@ class GUI:
                 return False
             # domainName should have it's final . before at least two letters (.de, .com etc)
             # We expect to find a . at index -3 or -4, but no more . in the last 2 or 3 letters. (exclude i.e. ".d.e")
-            if not (domainName[-3] == "." or domainName[-4] == "."): # .de / .com
+            if not (domainName[-3] == "." or domainName[-4] == "."):  # .de / .com
                 self.eMailLabel.configure(fg="red")
                 errorMessage("Ungültige E-Mail", "Fehler im Domain-Namen.")
                 return False
@@ -430,14 +434,16 @@ class GUI:
             # All ASCII chars should be allowed for accountName and domainName. Python can encode a string in ASCII, if the original string is the same as the ASCII Encoded one we know the original string was 100% ASCII compliant
             # Same thing with white spaces: attempt to remove white spaces, then compare lengths
             # Finally, check both for non-repeating "."; they are allowed in the name but not if following another "."
-            if (len(accountName) == len(accountName.encode("ascii"))) and (len(accountName) == len(accountName.replace(" ", ""))):
-                if "" not in accountName.split("."):  #Two . in a row would create a list with an empty space
+            if (len(accountName) == len(accountName.encode("ascii"))) and (
+                    len(accountName) == len(accountName.replace(" ", ""))):
+                if "" not in accountName.split("."):  # Two . in a row would create a list with an empty space
                     pass
             else:
                 self.eMailLabel.configure(fg="red")
                 errorMessage("Ungültige E-Mail", "Der Account-Name enthält nicht erlaubte Zeichen oder Leerzeichen.")
                 return False
-            if (len(domainName) == len(domainName.encode("ascii"))) and (len(domainName) == len(domainName.replace(" ", ""))):
+            if (len(domainName) == len(domainName.encode("ascii"))) and (
+                    len(domainName) == len(domainName.replace(" ", ""))):
                 pass
             else:
                 self.eMailLabel.configure(fg="red")
@@ -491,44 +497,44 @@ class GUI:
             else:
                 self.idLabel.configure(fg="black")
                 self.tree.insert("", "end", values=(
-                self.id_, self.fName, self.lName, self.birthday + self.age, self.eMail, self.gender))
+                    self.id_, self.fName, self.lName, self.birthday + self.age, self.eMail, self.gender))
                 self.idList.append(self.id_)
 
         def removeEntry():
             try:
                 self.selectedEntry = self.tree.selection()[0]
                 self.tree.delete(self.selectedEntry)
-            except (IndexError, AttributeError): #if you try to delete without having anything selected
+            except (IndexError, AttributeError):  # if you try to delete without having anything selected
                 pass
             try:  # If I try to remove the last row, it will always attempt to remove the one that doesn't exist yet. It is off by +1, it works for all other rows.
                 self.idList.remove(self.selectedEntry)
             except ValueError:  # Therefore, if the normal deletion fails, we pop the last item from the list. It's not elegant though.
                 self.idList.pop()
-            except AttributeError: # Don't throw an error if nothing was selected
+            except AttributeError:  # Don't throw an error if nothing was selected
                 pass
 
         # Save and Loading
-        
+
         def loadFile():
             file = filedialog.askopenfile()
-            try: # If user closes the window before choosing a file to load
+            try:  # If user closes the window before choosing a file to load
                 self.loadFileName = file.name
             except AttributeError:
-                pass 
-            
+                pass
+
             if not file:
                 return
-            # Clean up the displayed table, empty the idList:
+                # Clean up the displayed table, empty the idList:
                 self.idList = []
-                
+
             for child in self.tree.get_children():
                 self.tree.delete(child)
-            
+
             # Open, read contents and close file
-            f = open (file.name, "r")
+            f = open(file.name, "r")
             data = json.loads(f.read())
             f.close()
-            
+
             # Input the loaded data into the table
             for i in range(len(data)):
                 self.id_ = data[i]["id_"]
@@ -537,70 +543,72 @@ class GUI:
                 self.birthday = data[i]["birthday"]
                 self.eMail = data[i]["eMail"]
                 self.gender = data[i]["gender"]
-                self.tree.insert("", "end", values=(self.id_, self.fName, self.lName, self.birthday, self.eMail, self.gender))
+                self.tree.insert("", "end",
+                                 values=(self.id_, self.fName, self.lName, self.birthday, self.eMail, self.gender))
                 self.idList.append(str(self.id_))
 
-            
-            
         def saveFileAs():
             file = filedialog.askopenfile()
-            try: # If user closes the window before choosing a file to save
+            try:  # If user closes the window before choosing a file to save
                 self.saveFileAsName = file.name
             except AttributeError:
-                pass 
+                pass
             if not file:
                 errorMessage("Speichern fehlgeschlagen", "Keine Datei ausgewählt")
                 return
-            
+
             # Read each row of displayed entries
             for child in self.tree.get_children():
-                
                 # Create the Person objects and store them in a list
-                self.personList.append(Person(self.tree.item(child)["values"][0], self.tree.item(child)["values"][1], self.tree.item(child)["values"][2], self.tree.item(child)["values"][3], self.tree.item(child)["values"][4], self.tree.item(child)["values"][5]))
-            
+                self.personList.append(Person(self.tree.item(child)["values"][0], self.tree.item(child)["values"][1],
+                                              self.tree.item(child)["values"][2], self.tree.item(child)["values"][3],
+                                              self.tree.item(child)["values"][4], self.tree.item(child)["values"][5]))
+
             json_string = json.dumps([ob.__dict__ for ob in self.personList])
             f = open(self.saveFileAsName, "w")
             f.write(json_string)
             f.close()
-            
-            infoMessage("Datei gespeichert", f"Datei erfolgreich unter {file.name} gespeichert")
-            return 
 
-       
+            infoMessage("Datei gespeichert", f"Datei erfolgreich unter {file.name} gespeichert")
+            return
+
         def saveFile():
             if not self.saveFileAsName == "":
                 # Read each row of displayed entries
                 for child in self.tree.get_children():
-                    
                     # Create the Person objects and store them in a list
-                    self.personList.append(Person(self.tree.item(child)["values"][0], self.tree.item(child)["values"][1], self.tree.item(child)["values"][2], self.tree.item(child)["values"][3], self.tree.item(child)["values"][4], self.tree.item(child)["values"][5]))
-                
+                    self.personList.append(
+                        Person(self.tree.item(child)["values"][0], self.tree.item(child)["values"][1],
+                               self.tree.item(child)["values"][2], self.tree.item(child)["values"][3],
+                               self.tree.item(child)["values"][4], self.tree.item(child)["values"][5]))
+
                 json_string = json.dumps([ob.__dict__ for ob in self.personList])
                 f = open(self.saveFileAsName, "w")
                 f.write(json_string)
                 f.close()
-                
-                #for i in range(len(json_string)):
+
+                # for i in range(len(json_string)):
                 #    print(json_string[i])
                 infoMessage("Datei gespeichert", f"Datei erfolgreich unter {self.saveFileAsName} gespeichert")
-                return 
+                return
             else:
                 saveFileAs()
-            
+
         def deleteAllEntries():
             # Confirmation check:
-            if questionMessage("Alle Einträge löschen?", "Wirklich alle Einträge löschen? Ungespeicherte Daten gehen verloren!") == "yes":
-                
+            if questionMessage("Alle Einträge löschen?",
+                               "Wirklich alle Einträge löschen? Ungespeicherte Daten gehen verloren!") == "yes":
+
                 # Clean up the displayed table, empty the idList and reset the auto-increment counter:
                 self.idList = []
                 self.idCounter = 0
-                
+
                 for child in self.tree.get_children():
-                    self.tree.delete(child)            
+                    self.tree.delete(child)
                 return
             else:
                 return
-        
+
         def updateSettings():
             self.allowedNameLength = [int(self.minNameLengthEntry.get()), int(self.maxNameLengthEntry.get())]
             self.allowedAgeRange = [int(self.minAgeEntry.get()), int(self.maxAgeEntry.get())]
@@ -626,11 +634,10 @@ class GUI:
                 self.useEmailWhitelist = True
                 self.eMailBlackListCombo.insert(0, "Whitelist")
 
-
         def optionsWindow():
             optionsWindow = Tk()
             optionsWindow.title("Optionen")
-            
+
             # Create the entries and labels
             self.minNameLengthLabel = Label(optionsWindow, text="Mindestlänge für Vor-/Nachname")
             self.minNameLengthEntry = Entry(optionsWindow, width=3)
@@ -658,7 +665,7 @@ class GUI:
             self.eMailBlackListCombo.insert(0, "keine")
             self.eMailBlackListCombo.configure(state="readonly")
 
-            self.saveButton = Button(optionsWindow, text="Speichern", command = updateSettings)
+            self.saveButton = Button(optionsWindow, text="Speichern", command=updateSettings)
 
             self.minNameLengthLabel.grid(column=0, row=0)
             self.minNameLengthEntry.grid(column=1, row=0)
@@ -679,12 +686,6 @@ class GUI:
             self.eMailBlackListCombo.grid(column=1, row=5)
 
             self.saveButton.grid(column=0, row=6, columnspan=2)
-
-
-
-
-            
-
 
 
 def main():
