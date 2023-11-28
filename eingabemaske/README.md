@@ -12,3 +12,5 @@ Features unter anderem:
 - Geburtstag: Validiert korrektes Datum und ob es das berechnete Alter im erlaubten Bereich liegt (standardmäßig 13-100 J.)
 - E-Mail: Prüft auf plausibel mögliche Eingaben, mit optionaler Whitelist und Blacklist für das Domain
 - Geschlecht: Auswahl über Dropdown Menü
+
+![qMTzgbp](https://github.com/myc5/lernprojekte/assets/136581584/64061859-d0e5-404d-9ab6-c80702459ebc)
