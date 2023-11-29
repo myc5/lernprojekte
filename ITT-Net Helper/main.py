@@ -453,16 +453,23 @@ class ISC:  # Bildgröße
         self.dpiEntry.grid(row=1, column=5, sticky="w")
         self.dpiEntry.insert(0, "300")
 
+        
         self.compressionLabel = ttk.Label(self.frame_content_dimensions, text="Kompression [%]", justify="center")
         self.compressionPercent = ttk.Spinbox(self.frame_content_dimensions, justify="center", width=3, from_=0, to=99, increment=5)
         self.compressionLabel.grid(row=5, column=0)
         self.compressionPercent.grid(row=5, column=1)
         self.compressionPercent.insert(0, "50")
+        
+        #self.compressionTimesLabel = ttk.Label(self.frame_content_dimensions, text="Kompression [-fach]", justify="center")
+        #self.compressionTimesEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=3)
+        #self.compressionTimesLabel.grid(row=5, column=3)
+        #self.compressionTimesEntry.grid(row=5, column=4)
+        #self.compressionTimesEntry.insert(0, "12")
 
         self.colorDepthLabel = ttk.Label(self.frame_content_dimensions, text="Farbtiefe:", justify="center")
         self.colorDepthEntry = ttk.Entry(self.frame_content_dimensions, justify="center", width=4)
-        self.colorDepthLabel.grid(row=5, column=4)
-        self.colorDepthEntry.grid(row=5, column=5)
+        self.colorDepthLabel.grid(row=0, column=4)
+        self.colorDepthEntry.grid(row=0, column=5)
         self.colorDepthEntry.insert(0, "8")
 
         self.videoFPS = ttk.Entry(self.frame_content_video, width=4)
@@ -532,7 +539,8 @@ class ISC:  # Bildgröße
                 height = int(float(self.dpiHeightEntry.get()) / 2.54 * dpi)
                 width = int(float(self.dpiWidthEntry.get()) / 2.54 * dpi)
             colordepth = int(self.colorDepthEntry.get())
-            compression = (100 - int(self.compressionPercent.get())) / 100
+            compression = (100 - float(self.compressionPercent.get())) / 100
+            compressionTimes
 
             # These calculation always need to happen to proceed
             imageSizeBit = height * width * colordepth * compression
@@ -548,15 +556,24 @@ class ISC:  # Bildgröße
             # If it is a video, we continue:
             if self.boolvar.get():
                 video = True
-                h = int(self.videoLengthHours.get())
-                m = int(self.videoLengthMinutes.get())
-                s = int(self.videoLengthSeconds.get())
-                fps = int(self.videoFPS.get())
+                try:
+                    h = int(self.videoLengthHours.get())
+                except ValueError:
+                    h = 0
+                try:
+                    m = int(self.videoLengthMinutes.get())
+                except ValueError:
+                    m = 0
+                try:
+                    s = int(self.videoLengthSeconds.get())
+                except ValueError:
+                    s = 0                             
+                fps = float(self.videoFPS.get())
                 videoDuration = h * 3600 + m * 60 + s
                 videoSize = imageSizeBit * fps * videoDuration * unitConversion
-                self.rechenwegbox.insert("end", f"Die Dateigröße des Videos beträgt: {videoSize:.2f} {unit}.\n")
+                self.rechenwegbox.insert("end", f"Die Dateigröße des Videos beträgt: {videoSize:.3f} {unit}.\n")
             else:
-                self.rechenwegbox.insert("end", f"Die Dateigröße des Bildes beträgt: {imageSize:.2f} {unit}.\n")
+                self.rechenwegbox.insert("end", f"Die Dateigröße des Bildes beträgt: {imageSize:.3f} {unit}.\n")
 
             self.rechenwegbox.insert("end", "\nDie Berechnung der Bildgröße folgt dieser Formel: \n\n"
                                             "[Höhe in Pixel] * [Breite in Pixel] * [Farbtiefe in Bit] * [Kompression in %] = [Bildgröße in Bit]\n")
@@ -572,7 +589,7 @@ class ISC:  # Bildgröße
 
             if unit == "Byte":
                 self.rechenwegbox.insert("end",
-                                         f"Umrechnung in {unit}: {imageSizeBit} Bit /8 = {imageSize:.2f} {unit}:\n\n")
+                                         f"Umrechnung in {unit}: {imageSizeBit} Bit /8 = {imageSize:.3f} {unit}:\n\n")
             elif unit != "Bit":
                 try:
                     count = list(unitDict.keys())[2:6].index(unit)# Check if unit is in the decimal portion
@@ -583,13 +600,13 @@ class ISC:  # Bildgröße
                     for i in range(count+1):
                         conversionString += f"/1024 ({list(unitDict.keys())[6:][i]}) "
 
-                self.rechenwegbox.insert("end", f"Umrechnung in {unit}: {imageSizeBit} Bit {conversionString}= {imageSize:.2f} {unit}:\n\n")
+                self.rechenwegbox.insert("end", f"Umrechnung in {unit}: {imageSizeBit} Bit {conversionString}= {imageSize:.3f} {unit}:\n\n")
 
             if video:
                 self.rechenwegbox.insert("end",
                                          f"Videos sind eine Abfolge von Bildern pro x Sekunden, darüber wird dann die Videogröße berechnet:\n")
                 self.rechenwegbox.insert("end",
-                                         f"{imageSize:.2f} {unit} * {fps} Bilder pro Sekunde * {videoDuration} Sekunden = {videoSize:.2f} {unit}")
+                                         f"{imageSize:.3f} {unit} * {fps} Bilder pro Sekunde * {videoDuration} Sekunden = {videoSize:.3f} {unit}")
 
         ttk.Button(self.frame_content, text="Berechnen", command=lambda: calc()).grid(row=5, column=0, columnspan=2)
 
@@ -686,4 +703,3 @@ def main():
 # Making sure that this only runs if it is the main file
 if __name__ == "__main__":
     main()
-
