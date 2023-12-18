@@ -651,7 +651,7 @@ class GUI:
             self.minAgeEntry = Entry(optionsWindow, width=3)
             self.minAgeEntry.insert(0, self.allowedAgeRange[0])
 
-            self.maxAgeLabel = Label(optionsWindow, text="Hochstes erlaubtes Alter")
+            self.maxAgeLabel = Label(optionsWindow, text="Höchstes erlaubtes Alter")
             self.maxAgeEntry = Entry(optionsWindow, width=3)
             self.maxAgeEntry.insert(0, self.allowedAgeRange[1])
 
