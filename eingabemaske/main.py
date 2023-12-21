@@ -295,14 +295,14 @@ class GUI:
                         return False
                 if string == "Nachname":
                     if question == True:
-                        self.nName = nameString
-                        self.nNameEntry.delete(0, "end")
-                        self.nNameEntry.insert(0, nameString)
+                        self.lName = nameString
+                        self.lNameEntry.delete(0, "end")
+                        self.lNameEntry.insert(0, nameString)
                     elif question == False:
-                        self.nName = originalNameString
-                        self.autoCorrectExceptions.append(self.nName)
+                        self.lName = originalNameString
+                        self.autoCorrectExceptions.append(self.lName)
                     else:
-                        self.nNameLabel.configure(fg="red")
+                        self.lNameLabel.configure(fg="red")
                         return False
             return True
 
