@@ -1,6 +1,6 @@
 // Print out all prime numbers between 0 and 100
 
-#include <format>
+#include <format> // requires C++ 20+
 #include <iostream>
 
 using std::format;
