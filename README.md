@@ -42,6 +42,9 @@ Sample Screenshots:
 
 ## Kleinere Projekte
 
+### Prime Numbers (C++)
+Printe alle Prime Nummern zwischen 0 und 100 aus.
+
 ### Base 10 Base 2 Conversion.py
 Meine erste Programmidee. Konvertiert Base10 <-> Base2 (z.B. GiB in MB).
 
